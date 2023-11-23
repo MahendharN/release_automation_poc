@@ -28,5 +28,4 @@ jobs:
 
       - name: Run Python script
         run: |
-          git checkout main
           python  hello.py
