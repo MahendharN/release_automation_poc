@@ -2,6 +2,7 @@ import os
 from github import Github
 import subprocess
 from git import Repo
+import git
 
 GITHUB_EVENT_NAME = 'GITHUB_EVENT_NAME'
 GITHUB_SHA = 'GITHUB_SHA'
@@ -85,8 +86,8 @@ class RCUpdate():
         return None
 
     def check_if_branch_is_present(self,branch_name):
-        for ref in self.repo.references:
-            print(ref)
+        allBranches = git.Git().branch("-all").split()
+        print(allBranches)
 
         
     def check_if_rc_head_is_present(self):
