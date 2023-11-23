@@ -1,6 +1,7 @@
 import os
 from github import Github
 import subprocess
+from git import Repo
 
 GITHUB_EVENT_NAME = 'GITHUB_EVENT_NAME'
 GITHUB_SHA = 'GITHUB_SHA'
@@ -59,7 +60,7 @@ class RCUpdate():
     def __init__(self):
         self.pr_info = get_pr_info()
         self.gitub = Github(self.pr_info.get(GITHUB_TOKEN))
-        self.repo = self.gitub.get_repo(self.pr_info.get(GITHUB_REPOSITORY))
+        self.repo = Repo(self.pr_info.get(GITHUB_REPOSITORY))
         try:
             self.mj_major_version = int(self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[0])
             self.mj_minor_version = int(self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[1])
@@ -93,7 +94,13 @@ class RCUpdate():
         return self.head_rc_branch
     
     def create_pr(self):
-        pass
+        self.create_new_branch(self.head_rc_branch,self.rc_branch_name)
+
+    def create_new_branch(self, new_branch_name, base_branch_name):
+
+        # Create a new branch from the base branch
+        self.repo.create_head(new_branch_name, commit=f'origin/{base_branch_name}')
+        print("created")
 
     def update_pr(self):
         pass
