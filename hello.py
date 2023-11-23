@@ -106,6 +106,19 @@ class RCUpdate():
 
         print(f"New branch '{new_branch_name}' created successfully hi from '{base_branch}'.")
 
+    def create_pull_request(self, title, head_branch, base_branch, body=''):
+        try:
+            pull_request = self.repo.create_pull(
+                title=title,
+                body=body,
+                base=base_branch,
+                head=head_branch
+            )
+            print(f"Pull request #{pull_request.number} created successfully.")
+            return pull_request
+        except Exception as e:
+            print(f"Error creating pull request: {e}")
+            return None
 
     def update_pr(self):
         pass
@@ -120,4 +133,9 @@ class RCUpdate():
 
 if __name__ == '__main__':
     rcupdate = RCUpdate()
+    pr_branch = os.getenv('PR_BRANCH')
+    print(f"PR Branch: {pr_branch}")
+    print(f"PR Branch: {pr_branch}")
+
+
 
