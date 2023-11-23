@@ -95,6 +95,9 @@ class RCUpdate():
         except:
             return False
         
+    def push_branch(self,branch_name):
+        self.repo.git.push('--set-upstream', 'origin', branch_name)
+
     def check_if_rc_head_is_present(self):
         if self.check_if_branch_is_present(f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}") == False:
             self.head_rc_branch = f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}"
@@ -103,6 +106,7 @@ class RCUpdate():
     
     def create_pr(self):
         self.create_new_branch(self.head_rc_branch,self.pr_info.get(GITHUB_HEAD_REF))
+        self.push_branch(self.head_rc_branch)
 
     def create_new_branch(self, new_branch_name, base_branch):
         # Get the base branch
