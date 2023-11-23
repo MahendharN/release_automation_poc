@@ -95,6 +95,7 @@ class RCUpdate():
         return self.head_rc_branch
     
     def create_pr(self):
+        return
         self.create_new_branch(self.head_rc_branch,self.rc_branch_name)
 
     def create_new_branch(self, new_branch_name, base_branch):
