@@ -101,6 +101,8 @@ class RCUpdate():
     def create_new_branch(self, new_branch_name, base_branch):
         # Get the base branch
         base_ref = self.repo.get_git_ref(f'heads/{base_branch}')
+        print(f"Base Branch: {base_branch}")
+        print(f"Base Branch SHA: {base_ref.object.sha}")
 
         # Create a new branch based on the base branch
         new_branch_ref = self.repo.create_git_ref(f'refs/heads/{new_branch_name}', base_ref.object.sha)
