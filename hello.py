@@ -1,6 +1,7 @@
 import os
 from github import Github
 import subprocess
+from git import Repo
 
 GITHUB_EVENT_NAME = 'GITHUB_EVENT_NAME'
 GITHUB_SHA = 'GITHUB_SHA'
@@ -59,7 +60,7 @@ class RCUpdate():
     def __init__(self):
         self.pr_info = get_pr_info()
         self.gitub = Github(self.pr_info.get(GITHUB_TOKEN))
-        self.repo = self.gitub.get_repo(self.pr_info.get(GITHUB_REPOSITORY))
+        self.repo = Repo(".")
         try:
             self.mj_major_version = int(self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[0])
             self.mj_minor_version = int(self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[1])
@@ -84,34 +85,22 @@ class RCUpdate():
         return None
 
     def check_if_branch_is_present(self,branch_name):
-        try:
-            self.repo.get_branch(branch_name)
+        if branch_name in self.repo.heads:
             return True
-        except:
-            return False
+        return False
         
     def check_if_rc_head_is_present(self):
         self.head_rc_branch = self.check_if_branch_is_present(f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}")
         return self.head_rc_branch
     
     def create_pr(self):
-        self.create_new_branch(self.head_rc_branch,self.rc_branch_name)
+        self.create_new_branch(self.head_rc_branch,self.pr_info.get(GITHUB_HEAD_REF))
 
     def create_new_branch(self, new_branch_name, base_branch):
         # Get the base branch
-        base_ref = self.repo.get_git_ref(f'heads/{base_branch}')
-        print(f"Base Branch: {base_branch}")
-        print(f"Base Branch SHA: {base_ref.object.sha}")
+        self.repo.create_head(new_branch_name, commit=f'origin/{base_branch}')
+        print(f"New branch '{new_branch_name}' created successfully from '{base_branch}'.")
 
-        try:
-        # Create a new branch from the base branch
-            new_branch_ref = self.repo.create_git_ref(f'refs/heads/{new_branch_name}', base_ref.object.sha)
-
-            print(f"New branch '{new_branch_name}' created successfully from '{base_branch}'.")
-            return new_branch_ref
-        except Exception as e:
-            print(f"Error creating new branch: {e}")
-            return None
 
     def create_pull_request(self, title, head_branch, base_branch, body=''):
         try:
