@@ -23,4 +23,4 @@ jobs:
           python -m pip install --upgrade pip
 
       - name: Run Python script
-        run: python ./hello.py
+        run: python hello.py
