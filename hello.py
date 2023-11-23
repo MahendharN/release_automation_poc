@@ -10,7 +10,10 @@ def get_pr_info():
     github_repository = os.environ.get('GITHUB_REPOSITORY')
 
     # Extract PR number from the ref
-    pr_number = github_ref.split('/')[-1] if github_ref else None
+    try:
+        pr_number = github_ref.split('/')[-2] if github_ref else None
+    except Exception as e:
+        print(f"Exception while getting PR number {e}")
 
     return {
         'github_event_name': github_event_name,
