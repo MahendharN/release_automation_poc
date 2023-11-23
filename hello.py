@@ -1,5 +1,6 @@
 import os
 from github import Github
+import subprocess
 
 GITHUB_EVENT_NAME = 'GITHUB_EVENT_NAME'
 GITHUB_SHA = 'GITHUB_SHA'
@@ -39,6 +40,21 @@ def get_pr_info():
         GITHUB_TOKEN: github_token
     }
 
+def run_git_command(command):
+    try:
+        result = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  # Ensure the output is in text mode
+            check=True   # Raise an exception for non-zero return codes
+        )
+        return result.stdout.strip()
+    except subprocess.CalledProcessError as e:
+        # Handle the error (e.stderr contains the error message)
+        print(f"Error running command: {e.stderr}")
+        return None
+    
 class RCUpdate():
     def __init__(self):
         self.pr_info = get_pr_info()
@@ -51,7 +67,13 @@ class RCUpdate():
             print(f"Exception while getting vyuha version from branch name. Exception {e}. Improper branch name. Branch Name {self.pr_info[GITHUB_BASE_REF]}")
             exit(0)
         self.rc_branch_name = self.get_rc_branch()
-        print(self.rc_branch_name)
+        if self.rc_branch_name == None:
+            print("No RC Branch . Thus exiting")
+            exit(0)
+        if self.pr_info.get(GITHUB_HEAD_REF,"") == "":
+            print("No HEAD BRANCH . Thus exiting")
+            exit(0)
+        self.process()
 
     def get_rc_branch(self):
         for i in range(1,MAX_RC_BRANCH_FIND_RETRY):
@@ -59,13 +81,26 @@ class RCUpdate():
             print(branch_name)
             if self.check_if_branch_is_present(branch_name):
                 return branch_name
+        return None
 
     def check_if_branch_is_present(self,branch_name):
-        try:
-            self.repo.get_branch(branch_name)
+        if branch_name in self.repo.heads:
             return True
-        except:
-            return False
+        return False
+        
+    def check_if_rc_head_is_present(self):
+        self.head_rc_branch = self.check_if_branch_is_present(f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}")
+        return self.head_rc_branch
+    
+    def create_pr():
+
+        
+    def process(self):
+        if self.check_if_rc_head_is_present():
+            self.update_pr()
+        else:
+            self.create_pr()
+
 
 
 if __name__ == '__main__':
