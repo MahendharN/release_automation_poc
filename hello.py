@@ -92,9 +92,12 @@ class RCUpdate():
         self.head_rc_branch = self.check_if_branch_is_present(f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}")
         return self.head_rc_branch
     
-    def create_pr():
+    def create_pr(self):
+        pass
 
-        
+    def update_pr(self):
+        pass
+  
     def process(self):
         if self.check_if_rc_head_is_present():
             self.update_pr()
