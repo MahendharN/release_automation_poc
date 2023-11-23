@@ -51,12 +51,13 @@ class RCUpdate():
             print(f"Exception while getting vyuha version from branch name. Exception {e}. Improper branch name. Branch Name {self.pr_info[GITHUB_BASE_REF]}")
             exit(0)
         self.rc_branch_name = self.get_rc_branch()
+        print(self.rc_branch_name)
 
     def get_rc_branch(self):
         for _ in range(MAX_RC_BRANCH_FIND_RETRY):
             branch_name = f"rc_{self.mj_major_version}.{self.mj_minor_version}.x"
-            if self.check_if_branch_is_present(branch_name)
-            return branch_name
+            if self.check_if_branch_is_present(branch_name):
+                return branch_name
 
     def check_if_branch_is_present(self,branch_name):
         try:
