@@ -62,6 +62,8 @@ class RCUpdate():
         self.pr_info = get_pr_info()
         self.gitub = Github(self.pr_info.get(GITHUB_TOKEN))
         self.repo = Repo(".")
+        self.gh_repo = self.gitub.get_repo(self.pr_info.get(GITHUB_REPOSITORY))
+        self.gh_repo.get_branch("rc_5.23.0")
         try:
             self.mj_major_version = int(self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[0])
             self.mj_minor_version = int(self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[1])
