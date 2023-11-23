@@ -20,7 +20,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          chmod +x hello.sh
+          python -m pip install --upgrade pip
+          pip install PyGithub
+          pip install GitPython
 
       - name: Run Python script
-        run: ./hello.sh
+        run: python  hello.py

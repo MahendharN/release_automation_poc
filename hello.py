@@ -85,11 +85,8 @@ class RCUpdate():
         return None
 
     def check_if_branch_is_present(self,branch_name):
-        try:
-            self.repo.git.checkout(branch_name)
-            return True
-        except:
-            return False
+        for ref in self.repo.references:
+            print(ref)
 
         
     def check_if_rc_head_is_present(self):
