@@ -45,8 +45,8 @@ class RCUpdate():
         self.gitub = Github(self.pr_info.get(GITHUB_TOKEN))
         self.repo = self.gitub.get_repo(self.pr_info.get(GITHUB_REPOSITORY))
         try:
-            self.mj_major_version = self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[0]
-            self.mj_minor_version = self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[1]
+            self.mj_major_version = int(self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[0])
+            self.mj_minor_version = int(self.pr_info.get(GITHUB_BASE_REF).split("-")[-1].split(".")[1])
         except Exception as e:
             print(f"Exception while getting vyuha version from branch name. Exception {e}. Improper branch name. Branch Name {self.pr_info[GITHUB_BASE_REF]}")
             exit(0)
