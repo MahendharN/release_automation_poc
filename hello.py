@@ -102,12 +102,16 @@ class RCUpdate():
         base_ref = self.repo.get_git_ref(f'heads/{base_branch}')
         print(f"Base Branch: {base_branch}")
         print(f"Base Branch SHA: {base_ref.object.sha}")
-        return
 
-        # Create a new branch based on the base branch
-        new_branch_ref = self.repo.create_git_ref(f'refs/heads/{new_branch_name}', base_ref.object.sha)
+        try:
+        # Create a new branch from the base branch
+            new_branch_ref = self.repo.create_git_ref(f'refs/heads/{new_branch_name}', base_ref.object.sha)
 
-        print(f"New branch '{new_branch_name}' created successfully hi from '{base_branch}'.")
+            print(f"New branch '{new_branch_name}' created successfully from '{base_branch}'.")
+            return new_branch_ref
+        except Exception as e:
+            print(f"Error creating new branch: {e}")
+            return None
 
     def create_pull_request(self, title, head_branch, base_branch, body=''):
         try:
