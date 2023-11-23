@@ -25,11 +25,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install PyGithub
           pip install GitPython
-
+      - name: Set git identity
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Run Python script
         run: |
             git checkout main
             date > generated.txt
+            git remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
             git config user.name github-actions
             git config user.email github-actions@github.com
             git add .
