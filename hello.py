@@ -86,8 +86,7 @@ class RCUpdate():
         return None
 
     def check_if_branch_is_present(self,branch_name):
-        allBranches = git.Git().branch("--all").split()
-        print(allBranches)
+        return self.repo.git.rev_parse('--verify', 'branch_name')
 
         
     def check_if_rc_head_is_present(self):
