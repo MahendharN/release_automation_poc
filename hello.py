@@ -55,7 +55,7 @@ class RCUpdate():
 
     def get_rc_branch(self):
         for _ in range(MAX_RC_BRANCH_FIND_RETRY):
-            branch_name = f"rc_{self.mj_major_version}.{self.mj_minor_version}.x"
+            branch_name = f"rc_{self.mj_major_version}.{self.mj_minor_version}.0"
             if self.check_if_branch_is_present(branch_name):
                 return branch_name
 
