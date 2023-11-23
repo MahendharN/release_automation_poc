@@ -1,28 +1,36 @@
 import os
-import subprocess
 
-# Get the name of the head branch
-head_branch = os.environ.get('GITHUB_HEAD_REF', 'unknown_head_branch')
+def get_pr_info():
+    # Get information about the pull request from environment variables
+    github_event_name = os.environ.get('GITHUB_EVENT_NAME')
+    github_sha = os.environ.get('GITHUB_SHA')
+    github_ref = os.environ.get('GITHUB_REF')
+    github_head_ref = os.environ.get('GITHUB_HEAD_REF')
+    github_base_ref = os.environ.get('GITHUB_BASE_REF')
+    github_repository = os.environ.get('GITHUB_REPOSITORY')
 
-# Find a branch with "rc" in its name
-rc_branch = None
-with subprocess.Popen(['gh', 'repo', 'view', '--json', 'default_branch', '-q', '.default_branch'], stdout=subprocess.PIPE) as process:
-    default_branch, _ = process.communicate()
-    default_branch = default_branch.decode().strip()
+    # Extract PR number from the ref
+    pr_number = github_ref.split('/')[-1] if github_ref else None
 
-with subprocess.Popen(['gh', 'repo', 'view', '--json', 'branches', '-q', '.branches[*].name'], stdout=subprocess.PIPE) as process:
-    branches, _ = process.communicate()
-    branches = branches.decode().strip().split()
+    return {
+        'github_event_name': github_event_name,
+        'github_sha': github_sha,
+        'github_ref': github_ref,
+        'github_head_ref': github_head_ref,
+        'github_base_ref': github_base_ref,
+        'github_repository': github_repository,
+        'pr_number': pr_number,
+    }
 
-for branch in branches:
-    if 'rc' in branch:
-        rc_branch = branch
-        break
+if __name__ == '__main__':
+    pr_info = get_pr_info()
 
-# Create a pull request from the head branch to the branch with "rc" in its name
-if rc_branch:
-    with subprocess.Popen(['gh', 'pr', 'create', '--base', default_branch, '--head', head_branch, '--title', f'Merge {head_branch} to {rc_branch}', '--body', f'This PR includes changes from {head_branch} to {rc_branch}.'], stdout=subprocess.PIPE) as process:
-        output, _ = process.communicate()
-        print(output.decode())
-else:
-    print(f'No branch found with "rc" in its name.')
+    print("GitHub Event Name:", pr_info['github_event_name'])
+    print("GitHub SHA:", pr_info['github_sha'])
+    print("GitHub Ref:", pr_info['github_ref'])
+    print("GitHub Head Ref:", pr_info['github_head_ref'])
+    print("GitHub Base Ref:", pr_info['github_base_ref'])
+    print("GitHub Repository:", pr_info['github_repository'])
+    print("PR Number:", pr_info['pr_number'])
+    print("Base Branch:", pr_info['github_base_ref'])
+    print("Head Branch:", pr_info['github_head_ref'])
