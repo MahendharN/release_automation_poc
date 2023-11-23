@@ -69,4 +69,5 @@ class RCUpdate():
 
 if __name__ == '__main__':
     rcupdate = RCUpdate()
+    print("hello")
 
