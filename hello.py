@@ -85,13 +85,12 @@ class RCUpdate():
         return None
 
     def check_if_branch_is_present(self,branch_name):
-        print(self.repo.heads)
-        print(self.repo.refs)
-        for branch in self.repo.heads:
-            print(branch)
-            if branch.name == branch_name:
-                return True
-        return False
+        try:
+            self.repo.git.checkout(branch_name)
+            return True
+        except:
+            return False
+
         
     def check_if_rc_head_is_present(self):
         self.head_rc_branch = self.check_if_branch_is_present(f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}")
