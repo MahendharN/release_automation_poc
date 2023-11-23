@@ -85,8 +85,9 @@ class RCUpdate():
         return None
 
     def check_if_branch_is_present(self,branch_name):
-        if branch_name in self.repo.heads:
-            return True
+        for branch in self.repo.heads:
+            if branch.name == branch_name:
+                return True
         return False
         
     def check_if_rc_head_is_present(self):
