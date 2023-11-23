@@ -96,8 +96,10 @@ class RCUpdate():
             return False
         
     def check_if_rc_head_is_present(self):
-        self.head_rc_branch = self.check_if_branch_is_present(f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}")
-        return self.head_rc_branch
+        if self.check_if_branch_is_present(f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}") == False:
+            self.head_rc_branch = f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}"
+            return False
+        return True
     
     def create_pr(self):
         self.create_new_branch(self.head_rc_branch,self.pr_info.get(GITHUB_HEAD_REF))
