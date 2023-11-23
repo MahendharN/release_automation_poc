@@ -3,7 +3,7 @@ name: Python Workflow
 on:
   pull_request:
     branches:
-      - major_5.23.x
+      - mj-5.31.x
 
 jobs:
   test:
