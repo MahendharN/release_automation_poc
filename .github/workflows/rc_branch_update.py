@@ -114,7 +114,7 @@ class RCUpdate():
     def create_pr(self):
         self.create_new_branch(self.head_rc_branch,self.pr_info.get(GITHUB_HEAD_REF))
         self.push_branch(self.head_rc_branch)
-        self.create_pull_request(f"{self.pr_info.get(GITHUB_HEAD_REF)} Rebase to RC",self.head_rc_branch,self.rc_branch_name,"")
+        self.create_pull_request(f"{self.pr_info.get(GITHUB_HEAD_REF)} Branch Rebase to RC",self.head_rc_branch,self.rc_branch_name,"")
 
     def create_new_branch(self, new_branch_name, base_branch):
         # Get the base branch
@@ -149,13 +149,14 @@ class RCUpdate():
         try:
             self.repo.git.checkout(self.head_rc_branch)
             self.repo.git.pull('origin', self.pr_info.get(GITHUB_HEAD_REF))
+            self.push_branch(self.head_rc_branch)
         except Exception as e:
             print(f"Exception while updating to RC-head branch {self.head_rc_branch}. Exception {e}")
             exit()
         if self.is_pull_request_present(self.rc_branch_name,self.head_rc_branch):
             print("Updated RC HEad branch as PR is already present")
         else:
-            self.create_pull_request(f"{self.pr_info.get(GITHUB_HEAD_REF)} Rebase to RC",self.head_rc_branch,self.rc_branch_name,"")
+            self.create_pull_request(f"{self.pr_info.get(GITHUB_HEAD_REF)} Branch Rebase to RC",self.head_rc_branch,self.rc_branch_name,"")
         
   
     def process(self):
@@ -169,8 +170,6 @@ class RCUpdate():
 if __name__ == '__main__':
     rcupdate = RCUpdate()
     pr_branch = os.getenv('PR_BRANCH')
-    print(f"PR Branch: {pr_branch}")
-    print(f"PR Branch: {pr_branch}")
 
 
 

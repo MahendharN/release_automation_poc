@@ -3,7 +3,10 @@ name: Python Workflow
 on:
   pull_request:
     branches:
-      - major_5.23.x
+      - 'mj*'
+    types:
+      - opened
+      - synchronize
 
 jobs:
   test:
@@ -11,7 +14,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.MH_PUSH }}
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -22,6 +28,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install PyGithub
+          pip install GitPython
 
       - name: Run Python script
-        run: python  hello.py
+        run: |
+            python .github/workflows/rc_branch_update.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
