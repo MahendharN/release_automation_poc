@@ -97,7 +97,7 @@ class RCUpdate():
             return False
         
     def push_branch(self,branch_name):
-        self.repo.git.push(branch_name)
+        self.repo.git.push("origin",branch_name)
 
     def check_if_rc_head_is_present(self):
         if self.check_if_branch_is_present(f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}") == False:
