@@ -124,7 +124,7 @@ class RCUpdate():
 
     def create_pull_request(self, title, head_branch, base_branch, body=''):
         try:
-            pull_request = self.repo.create_pull(
+            pull_request = self.gh_repo.create_pull(
                 title=title,
                 body=body,
                 base=base_branch,
