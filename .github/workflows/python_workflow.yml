@@ -29,6 +29,6 @@ jobs:
 
       - name: Run Python script
         run: |
-            python ./.github/workflows/rc_branch_update.py
+            python .github/workflows/rc_branch_update.py
         env:
           GITHUB_TOKEN: ${{ secrets.MH_PUSH }}

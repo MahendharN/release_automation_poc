@@ -149,6 +149,7 @@ class RCUpdate():
         try:
             self.repo.git.checkout(self.head_rc_branch)
             self.repo.git.pull('origin', self.pr_info.get(GITHUB_HEAD_REF))
+            self.push_branch(self.head_rc_branch)
         except Exception as e:
             print(f"Exception while updating to RC-head branch {self.head_rc_branch}. Exception {e}")
             exit()
