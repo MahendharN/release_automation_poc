@@ -35,6 +35,7 @@ jobs:
             git remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
             git config user.name github-actions
             git config user.email github-actions@github.com
+            python hello.py
             git checkout main
             date > generated.txt
             git add .
