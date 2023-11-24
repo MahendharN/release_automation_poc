@@ -62,6 +62,7 @@ class RCUpdate():
         self.pr_info = get_pr_info()
         self.gitub = Github(self.pr_info.get(GITHUB_TOKEN))
         self.repo = Repo(".")
+        self.repo.git.config('http.https://github.com/.extraheader', f'AUTHORIZATION: bearer {self.pr_info.get(GITHUB_TOKEN)}')
         self.gh_repo = self.gitub.get_repo(self.pr_info.get(GITHUB_REPOSITORY))
         print(self.gh_repo.get_branch("rc_5.24.0"))
         try:
