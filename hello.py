@@ -98,7 +98,12 @@ class RCUpdate():
             return False
         
     def push_branch(self,branch_name):
-        self.repo.git.push("origin",branch_name)
+        try:
+            self.repo.git.push("origin",branch_name)
+        except Exception as e:
+            print(f"Exception while pushing branch {branch_name} . Exception {e}")
+            exit()
+
 
     def check_if_rc_head_is_present(self):
         if self.check_if_branch_is_present(f"{self.rc_branch_name}-{self.pr_info.get(GITHUB_HEAD_REF)}") == False:
@@ -109,6 +114,7 @@ class RCUpdate():
     def create_pr(self):
         self.create_new_branch(self.head_rc_branch,self.pr_info.get(GITHUB_HEAD_REF))
         self.push_branch(self.head_rc_branch)
+        self.create_pull_request(f"{self.pr_info.get(GITHUB_HEAD_REF)} Rebase to RC",self.head_rc_branch,self.rc_branch_name,"")
 
     def create_new_branch(self, new_branch_name, base_branch):
         # Get the base branch
