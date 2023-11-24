@@ -118,8 +118,12 @@ class RCUpdate():
 
     def create_new_branch(self, new_branch_name, base_branch):
         # Get the base branch
-        self.repo.create_head(new_branch_name, commit=f'origin/{base_branch}')
-        print(f"New branch '{new_branch_name}' created successfully from '{base_branch}'.")
+        try:
+            self.repo.create_head(new_branch_name, commit=f'origin/{base_branch}')
+            print(f"New branch '{new_branch_name}' created successfully from '{base_branch}'.")
+        except Exception as e:
+            print("Exception while creating branch {new_branch_name}. Exception {e}. Exiting..")
+            exit()
 
 
     def create_pull_request(self, title, head_branch, base_branch, body=''):
@@ -134,10 +138,10 @@ class RCUpdate():
             return pull_request
         except Exception as e:
             print(f"Error creating pull request: {e}")
-            return None
+            exit()
 
     def update_pr(self):
-        pass
+        self.repo.checout
   
     def process(self):
         if self.check_if_rc_head_is_present():
