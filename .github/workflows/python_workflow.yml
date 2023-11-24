@@ -32,14 +32,6 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Run Python script
         run: |
-            git remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
-            git config user.name github-actions
-            git config user.email github-actions@github.com
             python hello.py
-            git checkout main
-            date > generated.txt
-            git add .
-            git commit -m "generated"
-            git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
