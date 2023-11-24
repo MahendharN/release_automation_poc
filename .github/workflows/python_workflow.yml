@@ -14,6 +14,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.MH_PUSH }}
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -25,19 +26,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install PyGithub
           pip install GitPython
-      - name: Set up SSH key
-        run: |
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
-            
       - name: Set git identity
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Run Python script
         run: |
-          python hello.py
-        env:
-          GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
+            git checkout main
+            date > generated.txt
+            git remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git add .
+            git commit -m "generated"
+            git push
