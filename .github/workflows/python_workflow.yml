@@ -32,6 +32,7 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Run Python script
         run: |
+            python hello.py
             git checkout main
             date > generated.txt
             git remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
