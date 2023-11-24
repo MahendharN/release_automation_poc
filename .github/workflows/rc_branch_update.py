@@ -170,8 +170,6 @@ class RCUpdate():
 if __name__ == '__main__':
     rcupdate = RCUpdate()
     pr_branch = os.getenv('PR_BRANCH')
-    print(f"PR Branch: {pr_branch}")
-    print(f"PR Branch: {pr_branch}")
 
 
 
