@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - 'mj*'
+    types:
+      - opened
+      - synchronize
 
 jobs:
   test:
