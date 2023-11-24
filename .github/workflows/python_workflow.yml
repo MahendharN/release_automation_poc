@@ -3,7 +3,7 @@ name: Python Workflow
 on:
   pull_request:
     branches:
-      - mj-5.31.x
+      - 'mj*'
 
 jobs:
   test:
@@ -32,6 +32,6 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
       - name: Run Python script
         run: |
-            python hello.py
+            python ./github/workflows/rc_branch_update.py
         env:
           GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
