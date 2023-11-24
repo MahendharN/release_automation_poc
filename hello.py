@@ -140,8 +140,23 @@ class RCUpdate():
             print(f"Error creating pull request: {e}")
             exit()
 
+    def is_pull_request_present(self, base_branch, head_branch):
+        pull_requests = self.gh_repo.get_pulls(base=base_branch, head=head_branch, state='open')
+
+        return any(pull_request for pull_request in pull_requests)
+
     def update_pr(self):
-        self.repo.checout
+        try:
+            self.repo.git.checkout(self.head_rc_branch)
+            self.repo.git.pull('origin', self.pr_info.get(GITHUB_HEAD_REF))
+        except Exception as e:
+            print(f"Exception while updating to RC-head branch {self.head_rc_branch}. Exception {e}")
+            exit()
+        if self.is_pull_request_present(self.rc_branch_name,self.head_rc_branch):
+            print("Updated RC HEad branch as PR is already present")
+        else:
+            self.create_pull_request(f"{self.pr_info.get(GITHUB_HEAD_REF)} Rebase to RC",self.head_rc_branch,self.rc_branch_name,"")
+        
   
     def process(self):
         if self.check_if_rc_head_is_present():
