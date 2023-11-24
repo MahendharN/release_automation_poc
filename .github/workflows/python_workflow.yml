@@ -26,12 +26,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install PyGithub
           pip install GitPython
-      - name: Set git identity
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
       - name: Run Python script
         run: |
-            python ./github/workflows/rc_branch_update.py
+            python ./.github/workflows/rc_branch_update.py
         env:
           GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
