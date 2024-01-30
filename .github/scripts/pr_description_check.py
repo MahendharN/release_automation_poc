@@ -20,6 +20,8 @@ description = event_payload['pull_request']['body']
 if description is None:
     description=""
 
+print(description)
+
 description = description.lower()
 
 # Define a pattern for required fields in a text string using the 'compulsory_pattern' variable
