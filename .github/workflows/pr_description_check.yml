@@ -23,6 +23,12 @@ jobs:
 
       - name: Check PR description
         run: |
+
+          title=$(jq --raw-output .pull_request.title "$GITHUB_EVENT_PATH")
+          if [[ "$title" =~ "Build*" ]]; then
+            echo "Title has 'Build', skipping description check."
+            exit 0
+          fi
           # Extract PR description
           description=$(jq --raw-output .pull_request.body "$GITHUB_EVENT_PATH")
           echo $description
