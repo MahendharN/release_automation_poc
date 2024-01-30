@@ -21,7 +21,7 @@ if description is None:
     description=""
 
 # Define compulsory and optional patterns for PR description
-compulsory_pattern = r"^Title:.*Description:.*Jira:.*Test Report:.*"
+compulsory_pattern = r"Title:.*Description:.*Jira:.*Test Report:.*"
 optional_pattern = r"(Deprecated Features:|Dependencies:|Limitations:).*"
 
 # Check PR description
