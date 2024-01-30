@@ -9,6 +9,8 @@ with open(os.getenv('GITHUB_EVENT_PATH'), 'r') as f:
 # Extract PR title
 title = event_payload['pull_request']['title']
 title_pattern = "Build.*"
+print(title)
+print(event_payload)
 
 # Skip description check if title contains 'Build'
 if re.match(title_pattern, title):
