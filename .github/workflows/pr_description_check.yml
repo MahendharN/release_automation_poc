@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Check PR description
-        if: startsWith(github.head_ref, 'rc_') || endsWith(github.head_ref, '.x') || github.head_ref == 'develop'
+        if: startsWith(github.base_ref, 'rc_') || endsWith(github.base_ref, '.x') || github.base_ref == 'develop'
         run: |
           # Extract PR description
           description=$(jq --raw-output .pull_request.body "$GITHUB_EVENT_PATH")
