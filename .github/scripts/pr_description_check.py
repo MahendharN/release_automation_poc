@@ -9,8 +9,6 @@ with open(os.getenv('GITHUB_EVENT_PATH'), 'r') as f:
 # Extract PR title
 title = event_payload['pull_request']['title']
 title_pattern = "Build.*"
-print(title)
-print(event_payload['pull_request'])
 
 # Skip description check if title contains 'Build'
 if re.match(title_pattern, title):
@@ -19,7 +17,8 @@ if re.match(title_pattern, title):
 
 # Extract PR description
 description = event_payload['pull_request']['body']
-print(description)
+if description is None:
+    description=""
 
 # Define compulsory and optional patterns for PR description
 compulsory_pattern = r"Title:.*Description:.*Jira:.*Test Report:.*"
