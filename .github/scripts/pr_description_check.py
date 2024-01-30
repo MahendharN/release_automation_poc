@@ -20,20 +20,18 @@ description = event_payload['pull_request']['body']
 if description is None:
     description=""
 
-# Define compulsory and optional patterns for PR description
-compulsory_pattern = r"Title:.*Description:.*Jira:.*Test Report:.*"
-optional_pattern = r"(Deprecated Features:|Dependencies:|Limitations:).*"
+description = description.lower()
 
-# Check PR description
-if re.search(compulsory_pattern, description):
+# Define a pattern for required fields in a text string using the 'compulsory_pattern' variable
+compulsory_pattern = "title:.*\ndescription:.*\njira:.*\ntest report:.*"
+optional_pattern = "dependencies:.*|limitations:.*|deprecated features:.*"
+
+
+optional_pattern_found = re.search(optional_pattern,description)
+compulsory_pattern_found = re.search(compulsory_pattern,description)
+
+if compulsory_pattern_found or optional_pattern_found:
     print("PR description is valid.")
-
-    if re.search(r"Deprecated\ Features|Dependencies|Limitations", description):
-        print("PR description includes optional information. Approval granted.")
-    else:
-        print("PR description does not include optional information. Approval granted.")
-elif re.search(optional_pattern, description):
-    print("PR description does not include compulsory information, but includes optional information. Approval granted.")
 else:
     print("PR description is not valid. Please ensure it follows the required format.")
     exit(1)
