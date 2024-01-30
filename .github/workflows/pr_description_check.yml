@@ -25,6 +25,7 @@ jobs:
         run: |
 
           title=$(jq --raw-output .pull_request.title "$GITHUB_EVENT_PATH")
+          echo $GITHUB_EVENT_PATH
           echo $title
           title_pattern="Build.*"
           if [[ "$title" =~ $title_pattern ]]; then
