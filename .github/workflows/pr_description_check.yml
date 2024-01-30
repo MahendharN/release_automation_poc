@@ -17,6 +17,7 @@ jobs:
         run: |
           # Extract PR description
           description=$(jq --raw-output .pull_request.body "$GITHUB_EVENT_PATH")
+          echo $description
 
           # Define compulsory and optional patterns
           compulsory_pattern="Title:.*\nDescription:.*\nJira:.*\nTest Report:.*"
