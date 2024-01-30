@@ -17,6 +17,7 @@ if re.match(title_pattern, title):
 
 # Extract PR description
 description = event_payload['pull_request']['body']
+print(description)
 
 # Define compulsory and optional patterns for PR description
 compulsory_pattern = r"Title:.*Description:.*Jira:.*Test Report:.*"
