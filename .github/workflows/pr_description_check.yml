@@ -26,7 +26,7 @@ jobs:
 
           title=$(jq --raw-output .pull_request.title "$GITHUB_EVENT_PATH")
           echo $title
-          if [[ "$title" =~ "Build*" ]]; then
+          if [[ "$title" =~ "Build.*" ]]; then
             echo "Title has 'Build', skipping description check."
             exit 0
           fi
