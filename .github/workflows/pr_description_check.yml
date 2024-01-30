@@ -41,7 +41,7 @@ jobs:
             if [[ "$description" =~ Deprecated\ Features || "$description" =~ Dependencies || "$description" =~ Limitations ]]; then
               echo "PR description includes optional information. Approval granted."
             else
-              echo "PR description does not include optional information. Additional approval may be required."
+              echo "PR description does not include optional information. Approval granted."
             fi
           elif [[ "$description" =~ $optional_pattern ]]; then
             echo "PR description does not include compulsory information, but includes optional information. Approval granted."
