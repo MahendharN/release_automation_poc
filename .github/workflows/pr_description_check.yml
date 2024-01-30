@@ -27,6 +27,8 @@ jobs:
           description=$(jq --raw-output .pull_request.body "$GITHUB_EVENT_PATH")
           echo $description
 
+          echo $HELLO
+
           # Define compulsory and optional patterns
           compulsory_pattern="Title:.*Description:.*Jira:.*Test Report:.*"
           optional_pattern="(Deprecated Features:|Dependencies:|Limitations:).*"
