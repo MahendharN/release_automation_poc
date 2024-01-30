@@ -24,9 +24,8 @@ if description is None:
 compulsory_pattern = r"Title:.*Description:.*Jira:.*Test Report:.*"
 optional_pattern = r"(Deprecated Features:|Dependencies:|Limitations:).*"
 
-print(str(description))
 # Check PR description
-if re.match(compulsory_pattern, description):
+if re.search(compulsory_pattern, description):
     print("PR description is valid.")
 
     if re.search(r"Deprecated\ Features|Dependencies|Limitations", description):
