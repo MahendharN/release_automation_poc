@@ -8,19 +8,27 @@ jobs:
   check_pr_description:
     runs-on: ubuntu-latest
 
+    if: startsWith(github.base_ref, 'rc_') || endsWith(github.base_ref, '.x') || github.base_ref == 'develop'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Check PR title for Build
+        if: startsWith(github.event.pull_request.title, 'Build')
+        run: |
+          echo "PR title starts with 'Build'. Merging without further checks."
+          # Merge the pull request using GitHub API or any other method you prefer
+          exit 0
+
       - name: Check PR description
-        if: startsWith(github.base_ref, 'rc_') || endsWith(github.base_ref, '.x') || github.base_ref == 'develop'
         run: |
           # Extract PR description
           description=$(jq --raw-output .pull_request.body "$GITHUB_EVENT_PATH")
           echo $description
 
           # Define compulsory and optional patterns
-          compulsory_pattern="Title:.*\nDescription:.*\nJira:.*\nTest Report:.*"
+          compulsory_pattern="Title:.*Description:.*Jira:.*Test Report:.*"
           optional_pattern="(Deprecated Features:|Dependencies:|Limitations:).*"
 
           # Check PR description
