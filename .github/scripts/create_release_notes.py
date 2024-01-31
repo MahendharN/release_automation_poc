@@ -11,20 +11,25 @@ def get_list_of_description(pr_info_list):
         if not description:
             print(f"Description of {pr_info.get('url')} is empty")
             continue
-        description_dict = get_desciption_dict_from_str(description)
+        try:
+            description_dict = get_desciption_dict_from_str(description)
+        except Exception as e:
+            print(f"Incorrect Description . Error {e} , Description {description} , PR {pr_info.get('url')}")
         description_list.append({description_dict.get("jira_id"):description_dict})
     return description_list
 
 def get_desciption_dict_from_str(input_string):
     print(input_string)
     patterns = {
-    "title": r"Title:\s*(.*?)\n",
-    "description": r"Description:(.*?)Jira:",
-    "jira": r"Jira:\s*\[(.*?)\]\((.*?)\)",
-    "test_report": r"Test Report:\s*\[(.*?)\]\((.*?)\)",
-    "deprecated_features": r"Deprecated Features:\s*(.*?)\n",
-    "dependencies": r"Dependencies:\s*(.*?)\n",
-    "limitations": r"Limitations:\s*(.*?)\n"
+        "title": r"Title:\s*(.*?)\n",
+        "description": r"Description:(.*?)\nJira:",
+        "jira": r"Jira:\s*\[(.*?)\]\((.*?)\)\n",
+        "jira_2": r"Jira:\s*(.*?)\n",
+        "test_report": r"Test Report:\s*\[(.*?)\]\((.*?)\)",
+        "test_report_2": r"Test Report:\s*(.*?)\n",
+        "deprecated_features": r"Deprecated Features:\s*(.*?)\n",
+        "dependencies": r"Dependencies:\s*(.*?)\n",
+        "limitations": r"Limitations:\s*(.*?)\n"
     }
 
     # Initialize an empty dictionary to store extracted information
@@ -37,6 +42,10 @@ def get_desciption_dict_from_str(input_string):
             if key in ["jira", "test_report"]:
                 info_dict[key + "_id"] = match.group(1).strip()
                 info_dict[key + "_link"] = match.group(2).strip()
+            elif key == "jira_2":
+                info_dict["jira_id"] = match.group(1).strip()
+            elif key == "test_report_2":
+                info_dict["test_report_link"] = match.group(1).strip()
             elif key in ["deprecated_features", "dependencies", "limitations"]:
                 # Split the comma-separated values and remove full stops from the end if present
                 values = [value.strip().rstrip(".") for value in match.group(1).split(",")]
