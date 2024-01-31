@@ -12,7 +12,7 @@ def get_list_of_description(pr_info_list):
             print(f"Description of {pr_info.get('url')} is empty")
             continue
         description_dict = get_desciption_dict_from_str(description)
-        description_list.append({description_dict.get("jira_id"),description_dict})
+        description_list.append({description_dict.get("jira_id"):description_dict})
     return description_list
 
 def get_desciption_dict_from_str(input_string):
