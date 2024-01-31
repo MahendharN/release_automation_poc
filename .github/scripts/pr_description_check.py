@@ -22,6 +22,7 @@ if description is None:
     exit(1)
 
 processed_desc = "".join(description.lower().split("\n"))
+print(os.environ.get("GITHUB_TOKEN"))
 
 # Define a pattern for required fields in a text string using the 'compulsory_pattern' variable
 compulsory_pattern = "title:.*description:.*jira:.*test report:.*"
