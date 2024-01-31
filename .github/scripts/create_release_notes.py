@@ -115,7 +115,7 @@ if __name__ == "__main__":
     print(get_list_of_description(pr_info_list))
     data = get_dict_to_update_in_build_notes(get_list_of_description(pr_info_list),PRESENT_TAG)
     print(data)
-    yaml = YAML(typ='safe')
+    yaml = YAML()
     yaml.indent(sequence=4, offset=2)
     yaml.default_flow_style = False
     yaml.preserve_quotes = True
