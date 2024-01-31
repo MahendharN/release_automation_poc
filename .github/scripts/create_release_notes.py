@@ -1,5 +1,50 @@
 import sys
 import requests
+import re
+
+def get_list_of_description(pr_info_list):
+    description_list = []
+    for pr_info in pr_info_list:
+        if pr_info.get("title").startswith("Build"):
+            continue
+        description = pr_info.get("body")
+        if not description:
+            print(f"Description of {pr_info.get('url')} is empty")
+            continue
+        description_dict = get_desciption_dict_from_str(pr_info)
+        description_list.append({description_dict.get("jira_id"),description_dict})
+    return description_list
+
+def get_desciption_dict_from_str(input_string):
+    patterns = {
+    "title": r"Title:\s*(.*?)\n",
+    "description": r"Description:(.*?)Jira:",
+    "jira": r"Jira:\s*\[(.*?)\]\((.*?)\)",
+    "test_report": r"Test Report:\s*\[(.*?)\]\((.*?)\)",
+    "deprecated_features": r"Deprecated Features:\s*(.*?)\n",
+    "dependencies": r"Dependencies:\s*(.*?)\n",
+    "limitations": r"Limitations:\s*(.*?)\n"
+    }
+
+    # Initialize an empty dictionary to store extracted information
+    info_dict = {}
+
+    # Iterate over the patterns and extract key-value pairs
+    for key, pattern in patterns.items():
+        match = re.search(pattern, input_string, re.DOTALL)
+        if match:
+            if key in ["jira", "test_report"]:
+                info_dict[key + "_id"] = match.group(1).strip()
+                info_dict[key + "_link"] = match.group(2).strip()
+            elif key in ["deprecated_features", "dependencies", "limitations"]:
+                # Split the comma-separated values and remove full stops from the end if present
+                values = [value.strip().rstrip(".") for value in match.group(1).split(",")]
+                info_dict[key] = values
+            else:
+                info_dict[key] = match.group(1).strip()
+
+    return info_dict
+
 if __name__ == "__main__":
     BASE_BRANCH = sys.argv[1]
     LAST_TAG = sys.argv[2]
@@ -40,3 +85,4 @@ if __name__ == "__main__":
             pr_info_list.append(pr_info)
 
     print(pr_info_list)
+    print(get_list_of_description(pr_info_list))
