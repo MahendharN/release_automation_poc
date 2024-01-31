@@ -1,0 +1,21 @@
+name: Create Release Notes Pr
+
+on: 
+    workflow_dispatch:
+        inputs:
+            last_blizzard_tag:
+                description: 'Last Blizzard Tag'
+                required: true
+            blizzard_tag_name:
+                description: 'Target Blizzard Tag'
+                required: true
+  
+jobs:
+  Release-Notes-Pr:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Create Release Notes Pr
+        run: | 
+            echo "PR Create Release Note"
+      
