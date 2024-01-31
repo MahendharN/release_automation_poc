@@ -108,6 +108,7 @@ class ReleaseNotesGenerator:
     
     def get_release_notes_dict(self):
         pr_list = self.__get_pr_list_from_github_api()
+        print(pr_list)
         description_list = self.get_list_of_description(pr_list)
         return self.get_dict_to_update_in_build_notes(description_list)
 
