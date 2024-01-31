@@ -120,9 +120,10 @@ class ReleaseNotesGenerator:
         build_dict["Author"] = "Blizzard"
         jira_dict = []
         for description in description_list:
-            if description.get("JiraId",None) is not None:
-                jira_dict.append({"JiraID":description.get("JiraId",""),"description":description.get("description")})
-        build_dict["Changes"] = jira_dict
+            if description.get("jira_id",None) is not None:
+                jira_dict.append({"JiraID":description.get("jira_id",""),"description":description.get("description")})
+        if len(jira_dict) != 0:
+            build_dict["Changes"] = jira_dict
         return {"BuildNotes":build_dict}
 
     
