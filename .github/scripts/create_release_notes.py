@@ -2,6 +2,7 @@ import sys
 import requests
 import re
 from datetime import datetime
+from ruamel.yaml import YAML
 
 
 def get_dict_to_update_in_build_notes(description_list,present_tag):
@@ -112,4 +113,8 @@ if __name__ == "__main__":
             pr_info_list.append(pr_info)
 
     print(get_list_of_description(pr_info_list))
-    print(get_dict_to_update_in_build_notes(get_list_of_description(pr_info_list),PRESENT_TAG))
+    data = get_dict_to_update_in_build_notes(get_list_of_description(pr_info_list),PRESENT_TAG)
+    yaml = YAML(typ='safe', indent=2)
+    yaml_data = yaml.dump(data)
+    print(yaml_data)
+
