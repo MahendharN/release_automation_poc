@@ -23,10 +23,10 @@ def get_desciption_dict_from_str(input_string):
     patterns = {
         "title": r"Title:\s*(.*?)\n",
         "description": r"Description:(.*?)\nJira:",
-        "jira": r"Jira:\s*\[(.*?)\]\((.*?)\)\n",
         "jira_2": r"Jira:\s*(.*?)\n",
-        "test_report": r"Test Report:\s*\[(.*?)\]\((.*?)\)",
         "test_report_2": r"Test Report:\s*(.*?)\n",
+        "jira": r"Jira:\s*\[(.*?)\]\((.*?)\)",
+        "test_report": r"Test Report:\s*\[(.*?)\]\((.*?)\)",
         "deprecated_features": r"Deprecated Features:\s*(.*?)\n",
         "dependencies": r"Dependencies:\s*(.*?)\n",
         "limitations": r"Limitations:\s*(.*?)\n"
