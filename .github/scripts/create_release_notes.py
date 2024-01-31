@@ -11,7 +11,7 @@ def get_list_of_description(pr_info_list):
         if not description:
             print(f"Description of {pr_info.get('url')} is empty")
             continue
-        description_dict = get_desciption_dict_from_str(pr_info)
+        description_dict = get_desciption_dict_from_str(description)
         description_list.append({description_dict.get("jira_id"),description_dict})
     return description_list
 
@@ -69,7 +69,6 @@ if __name__ == "__main__":
             "configuration_file_path": ".github/release.yml",
         },
     ).json()
-    print(pr_list_res)
     lines = pr_list_res["body"].splitlines()
     pr_info_list = []
     for line in lines:
