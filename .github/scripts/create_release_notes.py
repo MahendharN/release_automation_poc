@@ -39,13 +39,15 @@ def get_desciption_dict_from_str(input_string):
     for key, pattern in patterns.items():
         match = re.search(pattern, input_string, re.DOTALL)
         if match:
-            if key in ["jira", "test_report"]:
-                info_dict[key + "_id"] = match.group(1).strip()
-                info_dict[key + "_link"] = match.group(2).strip()
-            elif key == "jira_2":
+            if key == "jira_2":
                 info_dict["jira_id"] = match.group(1).strip()
+                if "atlassian" in info_dict["jira_id"]:
+                    info_dict["jira_id"] = info_dict["jira_id"].split("/")[-1] if len(info_dict["jira_id"].split("/")[-1]) != 0 else info_dict["jira_id"]
             elif key == "test_report_2":
                 info_dict["test_report_link"] = match.group(1).strip()
+            elif key in ["jira", "test_report"]:
+                info_dict[key + "_id"] = match.group(1).strip()
+                info_dict[key + "_link"] = match.group(2).strip()
             elif key in ["deprecated_features", "dependencies", "limitations"]:
                 # Split the comma-separated values and remove full stops from the end if present
                 values = [value.strip().rstrip(".") for value in match.group(1).split(",")]
