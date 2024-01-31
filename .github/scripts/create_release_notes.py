@@ -85,5 +85,4 @@ if __name__ == "__main__":
             ).json()
             pr_info_list.append(pr_info)
 
-    print(pr_info_list)
     print(get_list_of_description(pr_info_list))
