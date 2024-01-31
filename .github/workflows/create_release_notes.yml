@@ -33,6 +33,9 @@ jobs:
             DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
             echo "Last tag: $LAST_TAG"
             python ./.github/scripts/create_release_notes.py "$BASE_BRANCH" "$LAST_TAG" "$GIT_REPO" "$GITHUB_TOKEN" "$TARGET_BLIZZARD_TAG"
+
+            echo "Hello"
+            cat ./build_notes.yml
         env:
           GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
       
