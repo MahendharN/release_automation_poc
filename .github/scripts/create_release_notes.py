@@ -24,3 +24,19 @@ if __name__ == "__main__":
         },
     ).json()
     print(pr_list_res)
+    lines = pr_list_res["body"].splitlines()
+    pr_info_list = []
+    for line in lines:
+        if line.startswith('* '):
+            res = line.rsplit('/',1)
+            print (f"Pr number is {res[1]}")
+            pr_info = requests.get(
+            f"https://api.github.com/repos/{GIT_REPO}/pulls/{res[1]}",
+            headers={
+                "Authorization": f"Bearer {GIT_TOKEN}",
+                "Accept": "application/vnd.github.v3+json",
+            },
+            ).json()
+            pr_info_list.append(pr_info)
+
+    print(pr_info_list)
