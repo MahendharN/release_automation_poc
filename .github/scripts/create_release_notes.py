@@ -116,7 +116,7 @@ class ReleaseNotesGenerator:
         build_dict = {}
         build_dict["Tag"] = self.present_tag
         current_datetime = datetime.now()
-        build_dict["Date"] = current_datetime.strftime("%Y-%m-%d")
+        build_dict["Date"] = current_datetime.strftime("%d-%m-%Y")
         build_dict["Author"] = "Blizzard"
         jira_dict = []
         deprecated_features = []
