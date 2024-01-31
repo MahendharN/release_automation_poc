@@ -116,6 +116,8 @@ if __name__ == "__main__":
     data = get_dict_to_update_in_build_notes(get_list_of_description(pr_info_list),PRESENT_TAG)
     yaml = YAML(typ='safe')
     yaml.indent(sequence=4, offset=2)
-    yaml_data = yaml.dump(data)
-    print(yaml_data)
+    with open('build_notes.yml', 'w') as file:
+        yaml.dump(data, file)
+    with open('build_notes.yml', 'r') as file:
+        print(file.read())
 
