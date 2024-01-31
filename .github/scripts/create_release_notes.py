@@ -16,6 +16,7 @@ def get_list_of_description(pr_info_list):
     return description_list
 
 def get_desciption_dict_from_str(input_string):
+    print(input_string)
     patterns = {
     "title": r"Title:\s*(.*?)\n",
     "description": r"Description:(.*?)Jira:",
