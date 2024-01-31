@@ -12,7 +12,7 @@ title_pattern = "^Build"
 
 # Skip description check if title contains 'Build'
 if re.match(title_pattern, title):
-    print("Title has 'Build', skipping description check.")
+    print("Title starts with 'Build', skipping description check.")
     exit(0)
 
 # Extract PR description
