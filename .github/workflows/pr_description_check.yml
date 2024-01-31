@@ -8,32 +8,15 @@ jobs:
   check_pr_description:
     runs-on: ubuntu-latest
 
+    # Run the job only for specific branches
+    if: startsWith(github.base_ref, 'rc_') || endsWith(github.base_ref, '.x') || github.base_ref == 'develop'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Check PR description
-        if: startsWith(github.base_ref, 'rc_') || endsWith(github.base_ref, '.x') || github.base_ref == 'develop'
-        run: |
-          # Extract PR description
-          description=$(jq --raw-output .pull_request.body "$GITHUB_EVENT_PATH")
-
-          # Define compulsory and optional patterns
-          compulsory_pattern="Title:.*\nDescription:.*\nJira:.*\nTest Report:.*"
-          optional_pattern="(Deprecated Features:|Dependencies:|Limitations:).*"
-
-          # Check PR description
-          if [[ "$description" =~ $compulsory_pattern ]]; then
-            echo "PR description is valid."
-            
-            if [[ "$description" =~ Deprecated\ Features || "$description" =~ Dependencies || "$description" =~ Limitations ]]; then
-              echo "PR description includes optional information. Approval granted."
-            else
-              echo "PR description does not include optional information. Additional approval may be required."
-            fi
-          elif [[ "$description" =~ $optional_pattern ]]; then
-            echo "PR description does not include compulsory information, but includes optional information. Approval granted."
-          else
-            echo "PR description is not valid. Please ensure it follows the required format."
-            exit 1
-          fi
+      - name: Check PR Description
+        run: python .github/scripts/pr_description_check.py
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
