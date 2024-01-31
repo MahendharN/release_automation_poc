@@ -117,8 +117,9 @@ if __name__ == "__main__":
     print(data)
     yaml = YAML(typ='safe')
     yaml.indent(sequence=4, offset=2)
+    yaml.default_flow_style = False
     with open('build_notes.yml', 'w') as file:
-        yaml.dump(data, file,default_flow_style=False)
+        yaml.dump(data, file)
     with open('build_notes.yml', 'r') as file:
         print(file.read())
 
