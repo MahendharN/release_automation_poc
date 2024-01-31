@@ -119,11 +119,26 @@ class ReleaseNotesGenerator:
         build_dict["Date"] = current_datetime.strftime("%Y-%m-%d")
         build_dict["Author"] = "Blizzard"
         jira_dict = []
+        deprecated_features = []
+        dependencies = []
+        limitations = []
         for description in description_list:
             if description.get("jira_id",None) is not None:
                 jira_dict.append({"JiraID":description.get("jira_id",""),"description":description.get("description")})
+            if description.get("dependencies",None) is not None:
+                dependencies += description.get("dependencies")
+            if description.get("limitations",None) is not None:
+                limitations += deprecated_features.get("limitations")
+            if description.get("deprecated_features") is not None:
+                deprecated_features += description.get("deprecated_features")
         if len(jira_dict) != 0:
             build_dict["Changes"] = jira_dict
+        if len(dependencies)!=0:
+            build_dict["Dependencies"] = dependencies
+        if len(limitations) !=0:
+            build_dict["Limitations"] = limitations
+        if len(deprecated_features) != 0:
+            build_dict["Deprecated Features"] = deprecated_features
         return {"BuildNotes":build_dict}
 
     
