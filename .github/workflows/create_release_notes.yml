@@ -21,14 +21,14 @@ jobs:
 
       - name: Create Release Notes Pr
         run: | 
-            BASE_BRANCH=${{ github.ref_name }}
-            LAST_TAG=${{ github.event.inputs.last_blizzard_tag }}
-            GIT_REPO=${{ github.repository }}
-            TARGET_BLIZZARD_TAG=${{ github.event.inputs.blizzard_tag_name }}
-            RELEASE_NOTES_PR="build-release_notes_$TARGET_BLIZZARD_TAG"
-            DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-            echo "Last tag: $LAST_TAG"
-            python ./.github/scripts/create_release_notes.py "$BASE_BRANCH" "$LAST_TAG" "$GIT_REPO" "$GITHUB_TOKEN" "$TARGET_BLIZZARD_TAG"
+            # BASE_BRANCH=${{ github.ref_name }}
+            # LAST_TAG=${{ github.event.inputs.last_blizzard_tag }}
+            # GIT_REPO=${{ github.repository }}
+            # TARGET_BLIZZARD_TAG=${{ github.event.inputs.blizzard_tag_name }}
+            # RELEASE_NOTES_PR="build-release_notes_$TARGET_BLIZZARD_TAG"
+            # DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            # echo "Last tag: $LAST_TAG"
+            # python ./.github/scripts/create_release_notes.py "$BASE_BRANCH" "$LAST_TAG" "$GIT_REPO" "$GITHUB_TOKEN" "$TARGET_BLIZZARD_TAG"
         env:
           GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
       
