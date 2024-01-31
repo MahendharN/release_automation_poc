@@ -14,7 +14,7 @@ def get_dict_to_update_in_build_notes(description_list,present_tag):
     jira_dict = []
     for description in description_list:
         for key,value in description.items():
-            jira_dict.append({key:value.get("description")})
+            jira_dict.append({"JiraID":key,"description":value.get("description")})
     build_dict["Changes"] = jira_dict
     return {"BuildNotes":build_dict}
 
