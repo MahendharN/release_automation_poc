@@ -114,7 +114,8 @@ if __name__ == "__main__":
 
     print(get_list_of_description(pr_info_list))
     data = get_dict_to_update_in_build_notes(get_list_of_description(pr_info_list),PRESENT_TAG)
-    yaml = YAML(sequence=4, offset=2)
+    yaml = YAML()
+    yaml.indent(sequence=4, offset=2)
     yaml_data = yaml.dump(data)
     print(yaml_data)
 
