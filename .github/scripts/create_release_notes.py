@@ -134,11 +134,11 @@ class ReleaseNotesGenerator:
         if len(jira_dict) != 0:
             build_dict["Changes"] = jira_dict
         if len(dependencies)!=0:
-            build_dict["Dependencies"] = dependencies
+            build_dict["Dependencies"] = list(set(dependencies))
         if len(limitations) !=0:
-            build_dict["Limitations"] = limitations
+            build_dict["Limitations"] = list(set(limitations))
         if len(deprecated_features) != 0:
-            build_dict["Deprecated Features"] = deprecated_features
+            build_dict["Deprecated Features"] = list(set(deprecated_features))
         return {"BuildNotes":build_dict}
 
     
