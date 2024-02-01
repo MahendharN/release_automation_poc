@@ -79,7 +79,7 @@ jobs:
                     echo -e "$msg" > msg
                     gh pr create -B $BASE_BRANCH -H $RELEASE_NOTES_PR --title "Pr for Release Notes of $TARGET_BLIZZARD_TAG" \
                       --body "$msg"
-                    curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${RELEASE_NOTES_PR}"
+                    #curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${RELEASE_NOTES_PR}"
                 fi
             else
                 echo "Please give valid base branch"
