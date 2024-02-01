@@ -4,6 +4,7 @@ import re
 from datetime import datetime
 from ruamel.yaml import YAML
 
+BUILD_NOTES_FILE_PATH = "./build_notes.yml"
 
 class ReleaseNotesGenerator:
     def __init__(self,base_branch,last_tag,git_repo,git_token,present_tag):
@@ -52,7 +53,7 @@ class ReleaseNotesGenerator:
 
         return pr_info_list
     
-    def get_list_of_description(self,pr_info_list):
+    def __get_list_of_description(self,pr_info_list):
         description_list = []
         for pr_info in pr_info_list:
             if pr_info.get("title").startswith("Build"):
@@ -65,6 +66,7 @@ class ReleaseNotesGenerator:
                 description_dict = self.get_desciption_dict_from_str(description)
             except Exception as e:
                 print(f"Incorrect Description . Error {e} , Description {description} , PR {pr_info.get('url')}")
+                continue
             description_list.append(description_dict)
         return description_list
 
@@ -106,13 +108,19 @@ class ReleaseNotesGenerator:
 
         return info_dict
     
-    def get_release_notes_dict(self):
+    def generate_release_notes(self):
         pr_list = self.__get_pr_list_from_github_api()
-        description_list = self.get_list_of_description(pr_list)
-        print(description_list)
-        return self.get_dict_to_update_in_build_notes(description_list)
+        if pr_list is None or len(pr_list) == 0:
+            print("No PR found to generate release notes")
+            sys.exit(0)
+        description_list = self.__get_list_of_description(pr_list)
+        if len(description_list) == 0:
+            print("Unable to find description to generate release notes")
+            sys.exit(1)
+        yaml_data = self.__get_dict_to_update_in_build_notes(description_list)
+        self.__update_into_file(yaml_data)
 
-    def get_dict_to_update_in_build_notes(self,description_list):
+    def __get_dict_to_update_in_build_notes(self,description_list):
         build_dict = {}
         build_dict["Tag"] = self.present_tag
         current_datetime = datetime.now()
@@ -140,8 +148,19 @@ class ReleaseNotesGenerator:
         if len(deprecated_features) != 0:
             build_dict["Deprecated Features"] = list(set(deprecated_features))
         return {"BuildNotes":build_dict}
-
     
+    def __update_into_file(self,data):
+        yaml = YAML()
+        yaml.indent(sequence=4, offset=2)
+        yaml.default_flow_style = False
+        yaml.preserve_quotes = True
+        with open(BUILD_NOTES_FILE_PATH, 'w') as file:
+            try:
+                yaml.dump(data, file)
+            except Exception as e:
+                print(f"Unable to dump YAML data in path {BUILD_NOTES_FILE_PATH} , data {data}, Error {e}")
+                return
+        print(f"{BUILD_NOTES_FILE_PATH} created successfully.")
 
 if __name__ == "__main__":
     base_branch = sys.argv[1]
@@ -154,13 +173,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     release_notes_obj = ReleaseNotesGenerator(base_branch,last_tag,git_repo,git_token,present_tag)
-    data = release_notes_obj.get_release_notes_dict()
-    yaml = YAML()
-    yaml.indent(sequence=4, offset=2)
-    yaml.default_flow_style = False
-    yaml.preserve_quotes = True
-    with open('build_notes.yml', 'w') as file:
-        yaml.dump(data, file)
-    with open('build_notes.yml', 'r') as file:
-        print(file.read())
+    data = release_notes_obj.generate_release_notes()
 

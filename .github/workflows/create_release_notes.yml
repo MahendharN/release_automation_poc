@@ -34,8 +34,70 @@ jobs:
             echo "Last tag: $LAST_TAG"
             python ./.github/scripts/create_release_notes.py "$BASE_BRANCH" "$LAST_TAG" "$GIT_REPO" "$GITHUB_TOKEN" "$TARGET_BLIZZARD_TAG"
 
-            echo "Hello"
-            cat ./build_notes.yml
+            BASE_BRANCH=${{ github.ref_name }}
+            LAST_TAG=${{ github.event.inputs.last_blizzard_tag }}
+            GIT_REPO=${{ github.repository }}
+            TARGET_BLIZZARD_TAG=${{ github.event.inputs.blizzard_tag_name }}
+            RELEASE_NOTES_PR="build-release_notes_$TARGET_BLIZZARD_TAG"
+            DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            echo "Last tag: $LAST_TAG"
+            if [[ $BASE_BRANCH == *.x  || $BASE_BRANCH == "develop" || $BASE_BRANCH == rc* ]]
+            then
+                git config --local user.email "actions@github.com"
+                git config --local user.name "GitHub Actions"
+                if git rev-parse "$TARGET_BLIZZARD_TAG" >/dev/null 2>&1;
+                then
+                    echo "Target Blizzard Tag Already exist"
+                    git commit --allow-empty -m "ci(AutoReleaseNotes): Target Blizzard Already exist"
+                    git push origin $RELEASE_NOTES_PR
+                    msg="TARGET_BLIZZARD_TAG: $TARGET_BLIZZARD_TAG 
+                    Already exist please give correct tag 
+                    Closing Pull Request....."
+                    echo -e "$msg" > msg
+                    echo $msg
+                    gh pr create -B $BASE_BRANCH -H $RELEASE_NOTES_PR --title "Pr for Release Notes of $TARGET_BLIZZARD_TAG" \
+                      --body "$msg"
+                    curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${RELEASE_NOTES_PR}"
+                    exit 1
+                fi
+                exist_branch=$(curl -sH "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/branches/${RELEASE_NOTES_PR}")
+                echo "Check for branch: $exist_branch"
+                if [[ $(echo "$exist_branch" | jq -r '.message') != "Branch not found" ]]
+                then
+                    # Delete the branch
+                    echo "Branch exist deleting it first"
+                    curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${RELEASE_NOTES_PR}"
+                fi
+                git checkout $BASE_BRANCH
+                git checkout -b $RELEASE_NOTES_PR
+                python ./.github/scripts/create_release_notes.py "$BASE_BRANCH" "$LAST_TAG" "$GIT_REPO" "$GITHUB_TOKEN" "$TARGET_BLIZZARD_TAG"
+                git_status=$(git status --porcelain)
+                if [ -n "$git_status" ]
+                then
+                    if [[ $BASE_BRANCH == rc* ]]
+                    then
+                        git add build_notes.yml
+                    fi
+                    git commit -m "ci(AutoReleaseNotes): Update Release Notes for tag $TARGET_BLIZZARD_TAG"
+                    git push origin $RELEASE_NOTES_PR
+                    gh pr create -B $BASE_BRANCH -H $RELEASE_NOTES_PR --title "Build Pr for Release Notes of $TARGET_BLIZZARD_TAG" --body "TARGET_BLIZZARD_TAG: $TARGET_BLIZZARD_TAG"
+                else
+                    echo "There are no changes in the release notes"
+                    git commit --allow-empty -m "ci(AutoReleaseNotes): No changes in relase notes for tag $TARGET_BLIZZARD_TAG"
+                    git push origin $RELEASE_NOTES_PR
+                    msg="TARGET_BLIZZARD_TAG: $TARGET_BLIZZARD_TAG
+                    No changes in release notes
+                    Closing Pull Request....."
+                    echo -e "$msg" > msg
+                    gh pr create -B $BASE_BRANCH -H $RELEASE_NOTES_PR --title "Pr for Release Notes of $TARGET_BLIZZARD_TAG" \
+                      --body "$msg"
+                    curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${RELEASE_NOTES_PR}"
+                fi
+            else
+                echo "Please give valid base branch"
+                echo "Accepted branches are *.x, develop, rc*"
+                exit 1
+            fi
         env:
           GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
       
