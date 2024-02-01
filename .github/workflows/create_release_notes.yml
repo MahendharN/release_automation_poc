@@ -10,6 +10,10 @@ on:
                 description: 'Target Blizzard Tag'
                 required: true
   
+permissions:
+  contents: read
+  packages: write
+  
 jobs:
   Release-Notes-Pr:
     runs-on: ubuntu-latest
