@@ -28,7 +28,7 @@ print(os.environ.get("GITHUB_TOKEN"))
 compulsory_pattern = "title:.*description:.*jira:.*test report:.*"
 keywords = ["Jira", "Title", "Test Report", "Description"]
 incorrect_compulsary_pattern = r"\b(?:" + "|".join(keywords) + r")\b"
-optional_pattern = "dependencies:.*|limitations:.*|deprecated features:.*"
+optional_pattern = "\\n\s*dependencies:.*|\\n\slimitations:.*|\\n\sdeprecated features:.*"
 
 
 optional_pattern_found = re.search(optional_pattern,processed_desc)
