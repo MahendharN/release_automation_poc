@@ -74,10 +74,7 @@ jobs:
                 git_status=$(git status --porcelain)
                 if [ -n "$git_status" ]
                 then
-                    if [[ $BASE_BRANCH == rc* ]]
-                    then
-                        git add build_notes.yml
-                    fi
+                    git add build_notes.yml
                     git commit -m "ci(AutoReleaseNotes): Update Release Notes for tag $TARGET_BLIZZARD_TAG"
                     git push origin $RELEASE_NOTES_PR
                     gh pr create -B $BASE_BRANCH -H $RELEASE_NOTES_PR --title "Build Pr for Release Notes of $TARGET_BLIZZARD_TAG" --body "TARGET_BLIZZARD_TAG: $TARGET_BLIZZARD_TAG"
