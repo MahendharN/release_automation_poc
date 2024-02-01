@@ -1,0 +1,14 @@
+BuildNotes:
+  Tag: develop-06
+  Date: 01-02-2024
+  Author: Blizzard
+  Changes:
+    - JiraID: CRP-100032987
+      description: Some description about the above.
+    - JiraID: CRP-1000
+      description: Some description about the above.
+  Dependencies:
+    - dep1
+  Deprecated Features:
+    - abc
+    - cdf
