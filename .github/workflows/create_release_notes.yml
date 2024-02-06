@@ -9,10 +9,6 @@ on:
             blizzard_tag_name:
                 description: 'Target Blizzard Tag'
                 required: true
-  
-permissions:
-  contents: read
-  packages: write
 
 jobs:
   Release-Notes-Pr:
