@@ -49,54 +49,34 @@ deprecated_feature_pattern = r"Deprecated Features:(.*?)(Dependencies:|Limitatio
 dependencies_pattern = r"Dependencies:(.*?)(Deprecated Features:|Limitations:|$)"
 limitations_pattern = r"Limitations:(.*?)(Dependencies:|Deprecated Features:|$)"
 
-if "Deprecated Features:" in description:
-    depracated = re.search(deprecated_feature_pattern, description, re.DOTALL)
+def check_field(description, pattern, keyword):
+    field = re.search(pattern, description, re.DOTALL)
     try:
-        values0 = depracated.group(1).strip().split("\n")
+        values = field.group(1).strip().split("\n")
     except Exception as e:
         print(e)
-        print("Error parsing Deprecated features from Description.")
-        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+        print(f"Error parsing {keyword} from Description.")
+        print("PR Description is not Valid. Please check the required format.")
         exit(1)
-    if depracated and all("-" in value for value in values0) and len(values0) !=0:
-        optional_pattern_keywords.remove("Deprecated Features:")
+    if field and all("-" in value for value in values) and len(values) != 0:
+        return True
     else:
-        print("Deprecated Features Field Format is wrong")
-        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
-        exit(1)
-if "Dependencies:" in description:
-    dependencies = re.search(dependencies_pattern, description, re.DOTALL)
-    try:
-        values1 = dependencies.group(1).strip().split("\n")
-    except Exception as e:
-        print(e)
-        print("Error parsing Dependencies from Description.")
-        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
-        exit(1)
-    if dependencies and all("-" in value for value in values1) and len(values1) !=0:
-        optional_pattern_keywords.remove("Dependencies:")
-    else:
-        print("Dependencies Field Format is wrong")
-        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
-        exit(1)
-if "Limitations:" in description:
-    limitations = re.search(limitations_pattern, description, re.DOTALL)
-    try:
-        values2 = limitations.group(1).strip().split("\n")
-    except Exception as e:
-        print(e)
-        print("Error parsing Limitations from Description.")
-        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
-        exit(1)
-    if limitations and all("-" in value for value in values2) and len(values2) !=0:
-        optional_pattern_keywords.remove("Limitations:")
-    else:
-        print("Limitations Field Format is wrong")
-        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+        print(f"{keyword} Field Format is wrong")
+        print("PR Description is not Valid. Please check the required format.")
         exit(1)
         
+if "Deprecated Features:" in description:
+    if check_field(description, deprecated_feature_pattern, "Deprecated Features"):
+        optional_pattern_keywords.remove("Deprecated Features:")
+if "Dependencies:" in description:
+    if check_field(description, dependencies_pattern, "Dependencies"):
+        optional_pattern_keywords.remove("Dependencies:")
+if "Limitations:" in description:
+    if check_field(description, limitations_pattern, "Limitations"):
+        optional_pattern_keywords.remove("Limitations:")
+        
 if any(pattern not in description for pattern in optional_pattern_keywords) or len(optional_pattern_keywords) == 0:
-    if not any(pattern in description for pattern in compulsory_pattern_keywords) and not re.search(compulsory_pattern, description, re.DOTALL):
+    if not any(pattern in description for pattern in compulsory_pattern_keywords) and not re.search(compulsory_pattern, description, re.DOTALL) and len(optional_pattern_keywords) < 3:
         print("PR description is valid.")
         exit(0)
     elif any(pattern in description for pattern in compulsory_pattern_keywords) and re.search(compulsory_pattern, description, re.DOTALL):
