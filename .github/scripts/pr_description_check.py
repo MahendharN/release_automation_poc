@@ -18,8 +18,7 @@ import re
 # # Extract PR description
 # description = event_payload['pull_request']['body']
 
-description = '''
-Title: PR Description check Github Action
+description = '''Title: PR Description check Github Action
 Description: Github Action to check PR description. 
 Jira: DLP-184
 Test Report: LINK
@@ -45,7 +44,7 @@ if description is None:
 
 
 # Define a pattern for required fields in a text string using the 'compulsory_pattern' variable
-compulsory_pattern =  r"^(\n*|\s*)Title:.*\nDescription:.*\nJira:.*\nTest Report:[^\n]*($|\n*$|\n*Deprecated Features:|\n*Dependencies:|\n*Limitations:)"
+compulsory_pattern =  r"^(\n*|\s*)Title:.*\nDescription:.*\nJira:.*\nTest Report:[^\n]*"
 compulsory_pattern_keywords = ["Jira:", "Title:", "Test Report:", "Description:"]
 optional_pattern_keywords = ["Deprecated Features:","Dependencies:","Limitations:"]
 deprecated_feature_pattern = r"\n*Deprecated Features:(.*?)(Dependencies:|Limitations:|$)"
