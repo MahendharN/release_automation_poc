@@ -2,40 +2,43 @@ import os
 import json
 import re
 
-# Load pull request event payload
-with open(os.getenv('GITHUB_EVENT_PATH'), 'r') as f:
-    event_payload = json.load(f)
+# # Load pull request event payload
+# with open(os.getenv('GITHUB_EVENT_PATH'), 'r') as f:
+#     event_payload = json.load(f)
 
-# Extract PR title
-title = event_payload['pull_request']['title']
-title_pattern = "^Build"
+# # Extract PR title
+# title = event_payload['pull_request']['title']
+# title_pattern = "^Build"
 
-# Skip description check if title contains 'Build'
-if re.match(title_pattern, title):
-    print("Title starts with 'Build', skipping description check.")
-    exit(0)
+# # Skip description check if title contains 'Build'
+# if re.match(title_pattern, title):
+#     print("Title starts with 'Build', skipping description check.")
+#     exit(0)
 
-# Extract PR description
-description = event_payload['pull_request']['body']
+# # Extract PR description
+# description = event_payload['pull_request']['body']
 
-# description = '''
-# Title: Implementing AI based video portrait mode.
-# Description: Some description about the above.
-# Jira: CRP-100032987
-# Test Report: AIO link
+description = '''
+Title: PR Description check Github Action
+Description: Github Action to check PR description. 
+Jira: DLP-184
+Test Report: LINK
 
-# Deprecated Features: 
-# - abc
-# - cdf
+Deprecated Features: 
 
-# Dependencies: 
-# - dep1
-# - dep1
+- abc
+- cdf
 
-# Limitations: 
-# - lim1
-# - lim2
-# '''
+Dependencies: 
+
+- dep1
+- dep1.
+
+Limitations:
+
+- lim1
+- lim2.
+'''
 if description is None:
     print("PR description is not valid. Please ensure it follows the required format.")
     exit(1)
@@ -58,6 +61,7 @@ def check_field(description, pattern, keyword):
         exit(1)
     try:
         values = field.group(1).strip().split("\n")
+        print(values)
     except Exception as e:
         print(e)
         print(f"Error parsing {keyword} from Description.")
