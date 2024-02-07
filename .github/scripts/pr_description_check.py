@@ -45,12 +45,17 @@ if description is None:
 compulsory_pattern =  r"^(\n*|\s*)Title:.*\nDescription:.*\nJira:.*\nTest Report:[^\n]*($|\n*$|\n*Deprecated Features:|\n*Dependencies:|\n*Limitations:)"
 compulsory_pattern_keywords = ["Jira:", "Title:", "Test Report:", "Description:"]
 optional_pattern_keywords = ["Deprecated Features:","Dependencies:","Limitations:"]
-deprecated_feature_pattern = r"Deprecated Features:(.*?)(Dependencies:|Limitations:|$)"
-dependencies_pattern = r"Dependencies:(.*?)(Deprecated Features:|Limitations:|$)"
-limitations_pattern = r"Limitations:(.*?)(Dependencies:|Deprecated Features:|$)"
+deprecated_feature_pattern = r"\n+Deprecated Features:(.*?)(Dependencies:|Limitations:|$)"
+dependencies_pattern = r"\n+Dependencies:(.*?)(Deprecated Features:|Limitations:|$)"
+limitations_pattern = r"\n+Limitations:(.*?)(Dependencies:|Deprecated Features:|$)"
+
 
 def check_field(description, pattern, keyword):
     field = re.search(pattern, description, re.DOTALL)
+    if not field:
+        print(f"{keyword} Field is missing")
+        print("PR Description is not Valid. Please check the required format.")
+        exit(1)
     try:
         values = field.group(1).strip().split("\n")
     except Exception as e:
