@@ -107,6 +107,7 @@ class ReleaseNotesGenerator:
                 deprecated_features += deprecated_feature
             for limitation in description.get("Limitations",[]):
                 limitations += limitation
+        print(dependencies,deprecated_features,limitations)
         if len(jira_dict) != 0:
             build_dict["Changes"] = jira_dict
         if len(dependencies)!=0:
