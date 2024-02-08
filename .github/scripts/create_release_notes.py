@@ -6,6 +6,7 @@ from ruamel.yaml import YAML
 import yaml
 
 BUILD_NOTES_FILE_PATH = "./build_notes.yml"
+AUTHOR = "Blizzard"
 
 class ReleaseNotesGenerator:
     def __init__(self,base_branch,last_tag,git_repo,git_token,present_tag):
@@ -57,65 +58,19 @@ class ReleaseNotesGenerator:
     def __get_list_of_description(self,pr_info_list):
         description_list = []
         for pr_info in pr_info_list:
-            if pr_info.get("title").startswith("Build"):
+            if "(Build)" in pr_info.get("title"):
                 continue
             description = pr_info.get("body")
-            print(description)
             try:
-                parsed_data = yaml.safe_load(description)
+                description = yaml.safe_load(description)
             except Exception as e:
-                print(f"Error {e}")
-                parsed_data = None
-            print(parsed_data)
-            continue
+                print(f"Error while generating yaml for {pr_info.get('url')}. Error {e}")
+                description = None
             if not description:
                 print(f"Description of {pr_info.get('url')} is empty")
                 continue
-            try:
-                description_dict = self.get_desciption_dict_from_str(description)
-            except Exception as e:
-                print(f"Incorrect Description . Error {e} , Description {description} , PR {pr_info.get('url')}")
-                continue
-            description_list.append(description_dict)
+            description_list.append(description)
         return description_list
-
-    def get_desciption_dict_from_str(self,input_string):
-        patterns = {
-            "title": r"Title:\s*(.*?)\n",
-            "description": r"Description:(.*?)\nJira:",
-            "jira_2": r"Jira:\s*(.*?)\n",
-            "test_report_2": r"Test Report:\s*(.*?)\n",
-            "jira": r"Jira:\s*\[(.*?)\]\((.*?)\)",
-            "test_report": r"Test Report:\s*\[(.*?)\]\((.*?)\)",
-            "deprecated_features": r"Deprecated Features:\s*(.*?)\n",
-            "dependencies": r"Dependencies:\s*(.*?)\n",
-            "limitations": r"Limitations:\s*(.*?)\n"
-        }
-
-        # Initialize an empty dictionary to store extracted information
-        info_dict = {}
-
-        # Iterate over the patterns and extract key-value pairs
-        for key, pattern in patterns.items():
-            match = re.search(pattern, input_string, re.DOTALL)
-            if match:
-                if key == "jira_2":
-                    info_dict["jira_id"] = match.group(1).strip()
-                    if "atlassian" in info_dict["jira_id"]:
-                        info_dict["jira_id"] = info_dict["jira_id"].split("/")[-1] if len(info_dict["jira_id"].split("/")[-1]) != 0 else info_dict["jira_id"]
-                elif key == "test_report_2":
-                    info_dict["test_report_link"] = match.group(1).strip()
-                elif key in ["jira", "test_report"]:
-                    info_dict[key + "_id"] = match.group(1).strip()
-                    info_dict[key + "_link"] = match.group(2).strip()
-                elif key in ["deprecated_features", "dependencies", "limitations"]:
-                    # Split the comma-separated values and remove full stops from the end if present
-                    values = [value.strip().rstrip(".") for value in match.group(1).split(",")]
-                    info_dict[key] = values
-                else:
-                    info_dict[key] = match.group(1).strip()
-
-        return info_dict
     
     def generate_release_notes(self):
         pr_list = self.__get_pr_list_from_github_api()
@@ -123,7 +78,6 @@ class ReleaseNotesGenerator:
             print("No PR found to generate release notes")
             sys.exit(0)
         description_list = self.__get_list_of_description(pr_list)
-        exit(0)
         if len(description_list) == 0:
             print("Unable to find description to generate release notes")
             sys.exit(1)
@@ -135,20 +89,23 @@ class ReleaseNotesGenerator:
         build_dict["Tag"] = self.present_tag
         current_datetime = datetime.now()
         build_dict["Date"] = current_datetime.strftime("%d-%m-%Y")
-        build_dict["Author"] = "Blizzard"
+        build_dict["Author"] = AUTHOR
         jira_dict = []
         deprecated_features = []
         dependencies = []
         limitations = []
         for description in description_list:
-            if description.get("jira_id",None) is not None:
-                jira_dict.append({"JiraID":description.get("jira_id",""),"description":description.get("description")})
-            if description.get("dependencies",None) is not None:
-                dependencies += description.get("dependencies")
-            if description.get("limitations",None) is not None:
-                limitations += deprecated_features.get("limitations")
-            if description.get("deprecated_features") is not None:
-                deprecated_features += description.get("deprecated_features")
+            for tickets in description.get("Tickets",[]):
+                description = tickets.get("Description")
+                if description is None:
+                    description = ""
+                jira_dict.append({"JiraID":tickets.get("JiraID",""),"description":description})
+            for dependency in description.get("Dependencies",[]):
+                dependencies += dependency
+            for deprecated_feature in description.get("Deprecated Features",[]):
+                deprecated_features += deprecated_feature
+            for limitation in description.get("Limitations",[]):
+                limitations += limitation
         if len(jira_dict) != 0:
             build_dict["Changes"] = jira_dict
         if len(dependencies)!=0:
