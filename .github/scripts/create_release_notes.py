@@ -60,6 +60,12 @@ class ReleaseNotesGenerator:
                 continue
             description = pr_info.get("body")
             print(description)
+            try:
+                parsed_data = yaml.safe_load(description)
+            except Exception as e:
+                print(f"Error {e}")
+                parsed_data = None
+            print(parsed_data)
             continue
             if not description:
                 print(f"Description of {pr_info.get('url')} is empty")
