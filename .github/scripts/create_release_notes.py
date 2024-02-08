@@ -3,6 +3,7 @@ import requests
 import re
 from datetime import datetime
 from ruamel.yaml import YAML
+import yaml
 
 BUILD_NOTES_FILE_PATH = "./build_notes.yml"
 
