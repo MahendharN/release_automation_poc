@@ -59,8 +59,9 @@ class ReleaseNotesGenerator:
             if pr_info.get("title").startswith("Build"):
                 continue
             description = pr_info.get("body")
+            print(description)
+            continue
             if not description:
-                print(description)
                 print(f"Description of {pr_info.get('url')} is empty")
                 continue
             try:
@@ -115,6 +116,7 @@ class ReleaseNotesGenerator:
             print("No PR found to generate release notes")
             sys.exit(0)
         description_list = self.__get_list_of_description(pr_list)
+        exit(0)
         if len(description_list) == 0:
             print("Unable to find description to generate release notes")
             sys.exit(1)
