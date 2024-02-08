@@ -101,12 +101,9 @@ class ReleaseNotesGenerator:
                 if desc is None:
                     desc = ""
                 jira_dict.append({"JiraID":tickets.get("JiraID",""),"description":desc})
-            for dependency in description.get("Dependencies",[]):
-                dependencies += dependency
-            for deprecated_feature in description.get("Deprecated Features",[]):
-                deprecated_features += deprecated_feature
-            for limitation in description.get("Limitations",[]):
-                limitations += limitation
+            dependencies += description.get("Dependencies",[])
+            deprecated_features += description.get("Deprecated Features",[])
+            limitations += description.get("Limitations",[])
         print(dependencies,deprecated_features,limitations)
         if len(jira_dict) != 0:
             build_dict["Changes"] = jira_dict
