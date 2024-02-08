@@ -81,6 +81,7 @@ class ReleaseNotesGenerator:
         if len(description_list) == 0:
             print("Unable to find description to generate release notes")
             sys.exit(1)
+        print(description_list)
         yaml_data = self.__get_dict_to_update_in_build_notes(description_list)
         self.__update_into_file(yaml_data)
 
