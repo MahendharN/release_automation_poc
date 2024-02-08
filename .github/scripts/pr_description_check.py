@@ -3,101 +3,94 @@ import json
 import re
 import yaml
 
-# Load pull request event payload
-with open(os.getenv('GITHUB_EVENT_PATH'), 'r') as f:
-    event_payload = json.load(f)
+def check_jira_format(string):
+    """Check if a string follows the format 'ABC-123'."""
+    pattern = r'^[A-Z]+-\d+$'
+    return re.match(pattern, string) is not None
 
-# Extract PR title
-title = event_payload['pull_request']['title']
-title_pattern = "^Build"
+def read_yaml(file_path):
+    """Read YAML data from a file."""
+    with open(file_path, 'r') as f:
+        return yaml.safe_load(f)
+    
+def main():
+    # Load pull request event payload
+    event_path = os.getenv('GITHUB_EVENT_PATH')
+    with open(event_path, 'r') as f:
+        event_payload = json.load(f)
 
-# Skip description check if title contains 'Build'
-if re.match(title_pattern, title):
-    print("Title starts with 'Build', skipping description check.")
-    exit(0)
+    title = event_payload['pull_request']['title']
+    title_pattern = "(Build)"
 
-# Extract PR description
-description = event_payload['pull_request']['body']
+    # Skip description check if title contains 'Build'
+    if title_pattern in title:
+        print("Title starts with 'Build', skipping description check.")
+        exit(0)
 
-# description = '''
-# Title: PR Description check Github Action
-# Description: Github Action to check PR description. 
-# Jira: DLP-184
-# Test Report: LINK
+    description = event_payload['pull_request']['body']
+    if description is None:
+        print("PR Description is None")
+        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+        exit(1)
 
-# Deprecated Features: 
-
-# - abc
-# - cdf
-
-# Dependencies: 
-
-# - dep1
-# - dep1.
-
-# Limitations:
-
-# - lim1
-# - lim2.
-# '''
-
-parsed_data = yaml.safe_load(description)
-
-# Print the parsed data
-print(parsed_data)
-
-# if description is None:
-#     print("PR description is not valid. Please ensure it follows the required format.")
-#     exit(1)
+    try:
+        parsed_data = yaml.safe_load(description)
+    except Exception as e:
+        print(description)
+        print("Unable to generate YAML as description is wrong")
+        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+        exit(1)
 
 
-# # Define a pattern for required fields in a text string using the 'compulsory_pattern' variable
-# compulsory_pattern =  r"^(\n*|\s*)Title:.*\nDescription:.*\nJira:.*\nTest Report:[^\n]*($|\n*$|\n*Deprecated Features:|\n*Dependencies:|\n*Limitations:)"
-# compulsory_pattern_keywords = ["Jira:", "Title:", "Test Report:", "Description:"]
-# optional_pattern_keywords = ["Deprecated Features:","Dependencies:","Limitations:"]
-# deprecated_feature_pattern = r"\n*Deprecated Features:(.*?)(Dependencies:|Limitations:|$)"
-# dependencies_pattern = r"\n*Dependencies:(.*?)(Deprecated Features:|Limitations:|$)"
-# limitations_pattern = r"\n*Limitations:(.*?)(Dependencies:|Deprecated Features:|$)"
+    if parsed_data is None or parsed_data == {}:
+        print("No YAML Description Provided")
+        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+        exit(1)
 
+    # Print the parsed data
+    main_keys = ["Tickets","Dependencies","Deprecated Features","Limitations"]
+    if not any(key in parsed_data.keys() for key in main_keys):
+        print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+        exit(1)
 
-# def check_field(description, pattern, keyword):
-#     field = re.search(pattern, description, re.DOTALL)
-#     if not field:
-#         print(f"{keyword} Field has error")
-#         print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
-#         exit(1)
-#     try:
-#         values = field.group(1).strip().split("\n")
-#         print(values)
-#     except Exception as e:
-#         print(e)
-#         print(f"Error parsing {keyword} from Description.")
-#         print("PR Description is not Valid. Please check the required format.")
-#         exit(1)
-#     if field and all("-" in value for value in values) and len(values) != 0:
-#         return True
-#     else:
-#         print(f"{keyword} Field Format is wrong")
-#         print("PR Description is not Valid. Please check the required format.")
-#         exit(1)
+    # Ticket Field Check  
+    required_tickets_keys = ['JiraID', 'Description', 'SubTickets']
+    if "Tickets" in parsed_data:
+        for entry in parsed_data['Tickets']:
+            missing_keys = [key for key in required_tickets_keys if key not in entry]
+            # If any key is missing raise error
+            if missing_keys:
+                print(f"Error: Missing required keys in 'Tickets' entry: {', '.join(missing_keys)}")
+                print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+                exit(1)
+            # If SubTickets is not list raise error
+            if not isinstance(entry['SubTickets'], list):
+                print("Error: 'SubTickets' must be a list.")
+                print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+                exit(1)
+            # If JiraID is not string and not in format CRP-1292 raise error
+            if type(entry["JiraID"]) is not str or not check_jira_format(entry["JiraID"]):
+                print("Error: 'JiraID' must be formatted as 'CRP-123'")
+                print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+                exit(1)
+            # If SubTickets is not string and not in format CRP-1292 raise error
+            for sub_ticket in entry['SubTickets']:
+                if type(sub_ticket) is not str or not check_jira_format(sub_ticket):
+                    print("Error: 'SubTickets' must be formatted as 'CRP-123'")
+                    print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+                    exit(1)
         
-# if "Deprecated Features:" in description:
-#     if check_field(description, deprecated_feature_pattern, "Deprecated Features"):
-#         optional_pattern_keywords.remove("Deprecated Features:")
-# if "Dependencies:" in description:
-#     if check_field(description, dependencies_pattern, "Dependencies"):
-#         optional_pattern_keywords.remove("Dependencies:")
-# if "Limitations:" in description:
-#     if check_field(description, limitations_pattern, "Limitations"):
-#         optional_pattern_keywords.remove("Limitations:")
-        
-# if any(pattern not in description for pattern in optional_pattern_keywords) or len(optional_pattern_keywords) == 0:
-#     if not any(pattern in description for pattern in compulsory_pattern_keywords) and not re.search(compulsory_pattern, description, re.DOTALL) and len(optional_pattern_keywords) < 3:
-#         print("PR description is valid.")
-#         exit(0)
-#     elif any(pattern in description for pattern in compulsory_pattern_keywords) and re.search(compulsory_pattern, description, re.DOTALL):
-#         print("PR description is valid.")
-#         exit(0)
+    # Dependencies Field Check
+    optional_keys = ['Deprecated Features', 'Dependencies', 'Limitations']
+    for key in optional_keys:
+        if key in parsed_data:
+            # If optionals are not a list raise error
+            if not isinstance(parsed_data[key], list):
+                print(f"Error: '{key}' must have a list value.")
+                print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
+                exit(1)
 
-# print("PR Description is not Valid. Please check the link https://amagiengg.atlassian.net/wiki/spaces/CLOUD/pages/3408199746/ES+CRP-1292+Automate+Build+Note+Genration+for+Cloudport+applications to check the required format.")
-# exit(1)
+    print("PR Description is valid.")
+
+if __name__ == "__main__":
+    main()
