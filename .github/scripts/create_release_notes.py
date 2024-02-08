@@ -60,6 +60,7 @@ class ReleaseNotesGenerator:
                 continue
             description = pr_info.get("body")
             if not description:
+                print(description)
                 print(f"Description of {pr_info.get('url')} is empty")
                 continue
             try:
