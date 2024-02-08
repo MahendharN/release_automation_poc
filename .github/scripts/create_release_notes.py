@@ -97,10 +97,10 @@ class ReleaseNotesGenerator:
         limitations = []
         for description in description_list:
             for tickets in description.get("Tickets",[]):
-                description = tickets.get("Description")
-                if description is None:
-                    description = ""
-                jira_dict.append({"JiraID":tickets.get("JiraID",""),"description":description})
+                desc = tickets.get("Description")
+                if desc is None:
+                    desc = ""
+                jira_dict.append({"JiraID":tickets.get("JiraID",""),"description":desc})
             for dependency in description.get("Dependencies",[]):
                 dependencies += dependency
             for deprecated_feature in description.get("Deprecated Features",[]):
