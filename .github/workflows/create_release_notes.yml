@@ -59,6 +59,7 @@ jobs:
                 fi
                 git checkout $BASE_BRANCH
                 git checkout -b $RELEASE_NOTES_PR
+                pip install -U spacy
                 python ./.github/scripts/create_release_notes.py "$BASE_BRANCH" "$GIT_REPO" "$GITHUB_TOKEN" "$TARGET_BLIZZARD_TAG"
                 git_status=$(git status --porcelain)
                 if [ -n "$git_status" ]
