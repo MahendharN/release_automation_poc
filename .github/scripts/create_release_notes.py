@@ -34,6 +34,7 @@ class ReleaseNotesGenerator:
                 tags = data.get("Tag List", [])
                 latest_tag = tags[-1] if tags else None
                 print(f"Last tag: {latest_tag}")
+                return latest_tag
         except Exception as exc:
                 print("Exception while reading taglist to fetch last tag")
                 print(exc)
