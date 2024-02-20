@@ -5,8 +5,8 @@ from datetime import datetime
 from ruamel.yaml import YAML
 import yaml
 
-BUILD_NOTES_FILE_PATH = "./build_notes.yml"
-TAGLIST_FILE_PATH = "./taglist.yml"
+BUILD_NOTES_FILE_PATH = "/build_notes.yml"
+TAGLIST_FILE_PATH = "/taglist.yml"
 AUTHOR = "Blizzard"
 
 class ReleaseNotesGenerator:
