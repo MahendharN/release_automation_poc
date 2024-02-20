@@ -6,15 +6,34 @@ from ruamel.yaml import YAML
 import yaml
 
 BUILD_NOTES_FILE_PATH = "./build_notes.yml"
+TAGLIST_FILE_PATH = "./taglist.yml"
 AUTHOR = "Blizzard"
 
 class ReleaseNotesGenerator:
     def __init__(self,base_branch,last_tag,git_repo,git_token,present_tag):
         self.base_branch = base_branch
-        self.last_tag = last_tag
+        self.last_tag = self.__get_last_tag_from_taglist()
+        if self.last_tag is None:
+            print(f"No last tag found in path {TAGLIST_FILE_PATH} to generate release notes")
+            exit(1)
         self.git_repo = git_repo
         self.git_token = git_token
         self.present_tag = present_tag
+
+    def __get_last_tag_from_taglist(self):
+        """
+        Get last tag from taglist.yml
+        """
+        with open(TAGLIST_FILE_PATH) as stream:
+            try:
+                data = yaml.safe_load(stream)
+                tags = data.get("Tag List", [])
+                latest_tag = tags[-1] if tags else None
+                print(f"Last tag: {latest_tag}")
+            except yaml.YAMLError as exc:
+                print("Exception while reading taglist to fetch last tag")
+                print(exc)
+                exit(1)
 
     def __get_pr_list_from_github_api(self):
         """
@@ -43,7 +62,6 @@ class ReleaseNotesGenerator:
         for line in lines:
             if line.startswith('* '):
                 res = line.rsplit('/',1)
-                print (f"Pr number is {res[1]}")
                 pr_info = requests.get(
                 f"https://api.github.com/repos/{self.git_repo}/pulls/{res[1]}",
                 headers={
@@ -81,7 +99,6 @@ class ReleaseNotesGenerator:
         if len(description_list) == 0:
             print("Unable to find description to generate release notes")
             sys.exit(1)
-        print(description_list)
         yaml_data = self.__get_dict_to_update_in_build_notes(description_list)
         self.__update_into_file(yaml_data)
 
@@ -104,7 +121,6 @@ class ReleaseNotesGenerator:
             dependencies += description.get("Dependencies",[])
             deprecated_features += description.get("Deprecated Features",[])
             limitations += description.get("Limitations",[])
-        print(dependencies,deprecated_features,limitations)
         if len(jira_dict) != 0:
             build_dict["Changes"] = jira_dict
         if len(dependencies)!=0:
@@ -130,7 +146,6 @@ class ReleaseNotesGenerator:
 
 if __name__ == "__main__":
     base_branch = sys.argv[1]
-    last_tag = sys.argv[2]
     git_repo = sys.argv[3]
     git_token = sys.argv[4]
     present_tag = sys.argv[5]
@@ -138,6 +153,5 @@ if __name__ == "__main__":
         print ("This workflow only applicable for .x, develop and rc branches")
         sys.exit(1)
 
-    release_notes_obj = ReleaseNotesGenerator(base_branch,last_tag,git_repo,git_token,present_tag)
+    release_notes_obj = ReleaseNotesGenerator(base_branch,git_repo,git_token,present_tag)
     data = release_notes_obj.generate_release_notes()
-
