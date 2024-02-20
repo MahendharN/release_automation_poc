@@ -146,9 +146,9 @@ class ReleaseNotesGenerator:
 
 if __name__ == "__main__":
     base_branch = sys.argv[1]
-    git_repo = sys.argv[3]
-    git_token = sys.argv[4]
-    present_tag = sys.argv[5]
+    git_repo = sys.argv[2]
+    git_token = sys.argv[3]
+    present_tag = sys.argv[4]
     if base_branch != "develop" and (not base_branch.endswith(".x")) and (not base_branch.startswith("rc")):
         print ("This workflow only applicable for .x, develop and rc branches")
         sys.exit(1)
