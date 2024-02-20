@@ -1,0 +1,23 @@
+BuildNotes:
+  Tag: develop-07
+  Date: 20-02-2024
+  Author: Blizzard
+  Changes:
+    - JiraID: CRP-1
+      description: done
+    - JiraID: NPIE-3
+      description: ''
+    - JiraID: CRP-2
+      description: ''
+  Dependencies:
+    - dep1.
+    - dep1
+  Limitations:
+    - lim1.
+    - lim2
+    - lim1
+  Deprecated Features:
+    - cdf
+    - abc
+    - abc.
+    - jef.
