@@ -4,6 +4,7 @@ import re
 from datetime import datetime
 from ruamel.yaml import YAML
 import yaml
+import os
 
 BUILD_NOTES_FILE_PATH = "/build_notes.yaml"
 TAGLIST_FILE_PATH = "/taglist.yaml"
@@ -13,6 +14,8 @@ class ReleaseNotesGenerator:
     def __init__(self,base_branch,git_repo,git_token,present_tag):
         self.base_branch = base_branch
         self.last_tag = self.__get_last_tag_from_taglist()
+        current_directory = os.getcwd()
+        print(f"Current working directory: {current_directory}")
         if self.last_tag is None:
             print(f"No last tag found in path {TAGLIST_FILE_PATH} to generate release notes")
             exit(1)
