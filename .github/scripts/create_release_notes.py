@@ -5,7 +5,7 @@ from datetime import datetime
 from ruamel.yaml import YAML
 import yaml as yaml1
 import os
-import spacy
+from fuzzywuzzy import fuzz
 
 BUILD_NOTES_FILE_PATH = "./build_notes.yaml"
 TAGLIST_FILE_PATH = "./taglist.yaml"
@@ -153,9 +153,8 @@ class ReleaseNotesGenerator:
                 if len(desc) == 0 or (ticket in jira_dict and len(jira_dict.get(ticket))):
                     jira_dict[ticket] = ""
                 elif ticket in jira_dict:
-                    nlp = spacy.load("en_core_web_lg")
-                    similarity = nlp(desc).similarity(nlp(jira_dict[ticket]))
-                    if similarity < 0.8:
+                    similarity = fuzz.ratio(desc, jira_dict[ticket])
+                    if similarity < 95:
                         jira_dict[ticket] = f"{jira_dict[ticket]}. {desc}"
                     else:
                         jira_dict[ticket] = desc
