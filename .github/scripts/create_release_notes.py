@@ -107,6 +107,27 @@ class ReleaseNotesGenerator:
         yaml_data = self.__get_dict_to_update_in_build_notes(description_list)
         self.__update_into_file(yaml_data)
 
+    def generate_taglist(self):
+        if os.path.exists(TAGLIST_FILE_PATH):
+            with open(TAGLIST_FILE_PATH, "r") as stream:
+                try:
+                    data = yaml.safe_load(stream)
+                    tags = data.get("Tag List", [])
+                except yaml.YAMLError:
+                    tags = []
+        else:
+            tags = []
+
+        tags.append(self.present_tag)
+        updated_data = {"Tag List": tags}
+        with open(TAGLIST_FILE_PATH, "w") as stream:
+            yaml.dump(updated_data, stream)
+
+        print(f"Tag '{self.present_tag}' added successfully to path {TAGLIST_FILE_PATH}!")
+
+
+
+
     def __get_dict_to_update_in_build_notes(self,description_list):
         build_dict = {}
         build_dict["Tag"] = self.present_tag
@@ -159,4 +180,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     release_notes_obj = ReleaseNotesGenerator(base_branch,git_repo,git_token,present_tag)
-    data = release_notes_obj.generate_release_notes()
+    release_notes_obj.generate_release_notes()
+    release_notes_obj.generate_taglist()
