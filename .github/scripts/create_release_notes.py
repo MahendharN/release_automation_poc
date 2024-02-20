@@ -13,9 +13,9 @@ AUTHOR = "Blizzard"
 class ReleaseNotesGenerator:
     def __init__(self,base_branch,git_repo,git_token,present_tag):
         self.base_branch = base_branch
-        self.last_tag = self.__get_last_tag_from_taglist()
         current_directory = os.getcwd()
         print(f"Current working directory: {current_directory}")
+        self.last_tag = self.__get_last_tag_from_taglist()
         if self.last_tag is None:
             print(f"No last tag found in path {TAGLIST_FILE_PATH} to generate release notes")
             exit(1)
