@@ -10,7 +10,7 @@ TAGLIST_FILE_PATH = "./taglist.yml"
 AUTHOR = "Blizzard"
 
 class ReleaseNotesGenerator:
-    def __init__(self,base_branch,last_tag,git_repo,git_token,present_tag):
+    def __init__(self,base_branch,git_repo,git_token,present_tag):
         self.base_branch = base_branch
         self.last_tag = self.__get_last_tag_from_taglist()
         if self.last_tag is None:
@@ -19,6 +19,9 @@ class ReleaseNotesGenerator:
         self.git_repo = git_repo
         self.git_token = git_token
         self.present_tag = present_tag
+
+        if self.last_tag == self.present_tag:
+            print(f"Last tag and Present tag are same. Last tag {self.last_tag} and Present Tag {self.present_tag}")
 
     def __get_last_tag_from_taglist(self):
         """
