@@ -3,7 +3,7 @@ import requests
 import re
 from datetime import datetime
 from ruamel.yaml import YAML
-import yaml
+import yaml as yaml1
 import os
 
 BUILD_NOTES_FILE_PATH = "./build_notes.yaml"
@@ -30,7 +30,7 @@ class ReleaseNotesGenerator:
         """
         try:
             with open(TAGLIST_FILE_PATH) as stream:
-                data = yaml.safe_load(stream)
+                data = yaml1.safe_load(stream)
                 tags = data.get("Tag List", [])
                 latest_tag = tags[-1] if tags else None
                 print(f"Last tag: {latest_tag}")
@@ -85,7 +85,7 @@ class ReleaseNotesGenerator:
                 continue
             description = pr_info.get("body")
             try:
-                description = yaml.safe_load(description)
+                description = yaml1.safe_load(description)
             except Exception as e:
                 print(f"Error while generating yaml for {pr_info.get('url')}. Error {e}")
                 description = None
@@ -111,7 +111,7 @@ class ReleaseNotesGenerator:
         if os.path.exists(TAGLIST_FILE_PATH):
             with open(TAGLIST_FILE_PATH, "r") as stream:
                 try:
-                    data = yaml.safe_load(stream)
+                    data = yaml1.safe_load(stream)
                     tags = data.get("Tag List", [])
                 except yaml.YAMLError:
                     tags = []
