@@ -27,13 +27,13 @@ class ReleaseNotesGenerator:
         """
         Get last tag from taglist.yml
         """
-        with open(TAGLIST_FILE_PATH) as stream:
-            try:
-                data = yaml.safe_load(stream)
-                tags = data.get("Tag List", [])
-                latest_tag = tags[-1] if tags else None
-                print(f"Last tag: {latest_tag}")
-            except yaml.YAMLError as exc:
+        try:
+            with open(TAGLIST_FILE_PATH) as stream:
+                    data = yaml.safe_load(stream)
+                    tags = data.get("Tag List", [])
+                    latest_tag = tags[-1] if tags else None
+                    print(f"Last tag: {latest_tag}")
+        except yaml.YAMLError as exc:
                 print("Exception while reading taglist to fetch last tag")
                 print(exc)
                 exit(1)
