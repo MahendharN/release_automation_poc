@@ -5,6 +5,7 @@ from datetime import datetime
 from ruamel.yaml import YAML
 import yaml as yaml1
 import os
+import spacy
 
 BUILD_NOTES_FILE_PATH = "./build_notes.yaml"
 TAGLIST_FILE_PATH = "./taglist.yaml"
@@ -133,29 +134,39 @@ class ReleaseNotesGenerator:
         print(f"Tag '{self.present_tag}' added successfully to path {TAGLIST_FILE_PATH}!")
 
 
-
-
     def __get_dict_to_update_in_build_notes(self,description_list):
         build_dict = {}
         build_dict["Tag"] = self.present_tag
         current_datetime = datetime.now()
         build_dict["Date"] = current_datetime.strftime("%d-%m-%Y")
         build_dict["Author"] = AUTHOR
-        jira_dict = []
+        jira_dict = {}
         deprecated_features = []
         dependencies = []
         limitations = []
         for description in description_list:
             for tickets in description.get("Tickets",[]):
                 desc = tickets.get("Description")
+                ticket = tickets.get("JiraID","")
                 if desc is None:
                     desc = ""
-                jira_dict.append({"JiraID":tickets.get("JiraID",""),"description":desc})
+                if len(desc) == 0 or (ticket in jira_dict and len(jira_dict.get(ticket))):
+                    jira_dict[ticket] = ""
+                elif ticket in jira_dict:
+                    nlp = spacy.load("en_core_web_lg")
+                    similarity = nlp(desc).similarity(nlp(jira_dict[ticket]))
+                    if similarity < 0.8:
+                        jira_dict[ticket] = f"{jira_dict[ticket]}. {desc}"
+                    else:
+                        jira_dict[ticket] = desc
+                else:
+                    jira_dict[ticket] = desc
             dependencies += description.get("Dependencies",[])
             deprecated_features += description.get("Deprecated Features",[])
             limitations += description.get("Limitations",[])
-        if len(jira_dict) != 0:
-            build_dict["Changes"] = jira_dict
+        jira_list = [{"JiraID":k,"description":v} for k,v in jira_dict.items()]
+        if len(jira_list) != 0:
+            build_dict["Changes"] = jira_list
         if len(dependencies)!=0:
             build_dict["Dependencies"] = list(set(dependencies))
         if len(limitations) !=0:
