@@ -120,9 +120,16 @@ class ReleaseNotesGenerator:
 
         tags.append(self.present_tag)
         updated_data = {"Tag List": tags}
+        yaml = YAML()
+        yaml.indent(sequence=4, offset=2)
+        yaml.default_flow_style = False
+        yaml.preserve_quotes = True
         with open(TAGLIST_FILE_PATH, "w") as stream:
-            yaml.dump(updated_data, stream)
-
+            try:
+                yaml.dump(updated_data, stream)
+            except Exception as e:
+                print(f"Unable to dump YAML data in path {TAGLIST_FILE_PATH} , data {updated_data}, Error {e}")
+                return
         print(f"Tag '{self.present_tag}' added successfully to path {TAGLIST_FILE_PATH}!")
 
 
