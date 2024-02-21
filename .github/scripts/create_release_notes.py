@@ -156,7 +156,7 @@ class ReleaseNotesGenerator:
                 elif ticket in jira_dict:
                     similarity = fuzz.ratio(desc, jira_dict[ticket])
                     print("sim",similarity)
-                    if similarity < 95:
+                    if similarity < 70:
                         jira_dict[ticket] = f"{jira_dict[ticket]}. {desc}"
                     else:
                         jira_dict[ticket] = desc
