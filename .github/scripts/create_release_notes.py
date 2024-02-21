@@ -160,6 +160,7 @@ class ReleaseNotesGenerator:
                         jira_dict[ticket] = desc
                 else:
                     jira_dict[ticket] = desc
+            print(jira_dict)
             dependencies += description.get("Dependencies",[])
             deprecated_features += description.get("Deprecated Features",[])
             limitations += description.get("Limitations",[])
