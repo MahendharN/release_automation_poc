@@ -150,7 +150,7 @@ class ReleaseNotesGenerator:
                 ticket = tickets.get("JiraID","")
                 if desc is None:
                     desc = ""
-                if len(desc) == 0 or (ticket in jira_dict and len(jira_dict.get(ticket))):
+                if len(desc) == 0 or (ticket in jira_dict and len(jira_dict.get(ticket)) == 0):
                     jira_dict[ticket] = ""
                 elif ticket in jira_dict:
                     similarity = fuzz.ratio(desc, jira_dict[ticket])
