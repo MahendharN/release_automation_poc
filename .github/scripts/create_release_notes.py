@@ -103,23 +103,24 @@ class ReleaseNotesGenerator:
         """
         description_list = []
         for pr_info in pr_info_list:
-            print(pr_info)
             if "(Build)" in pr_info.get("title"):
                 continue
             description = pr_info.get("body")
             try:
                 description = yaml1.safe_load(description)
             except Exception as e:
-                print(f"Error while generating YAML for {pr_info.get('url')}. Error: {e}")
+                print(f"Error while generating YAML for {pr_info.get('html_url')}. Error: {e}")
                 description = None
             if not description:
-                print(f"Description of {pr_info.get('url')} is empty")
+                print(f"Description of {pr_info.get('html_url')} is empty")
                 continue
             description_list.append(description)
         return description_list
     
     def generate_release_notes(self):
         pr_list = self.__get_pr_list_from_github_api()
+        print("List of PR's fetched from GitHub API")
+        print([pr.get("html_url") for pr in pr_list])
         if not pr_list:
             print("No PR found to generate release notes")
             sys.exit(0)
