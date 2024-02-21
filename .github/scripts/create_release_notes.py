@@ -23,7 +23,8 @@ class ReleaseNotesGenerator:
         self.present_tag = present_tag
 
         if self.last_tag == self.present_tag:
-            print(f"Last tag and Present tag are the same. Last tag: {self.last_tag}, Present Tag: {self.present_tag}")
+            print(f"Last tag and Present tag are the same. Last tag: {self.last_tag}, Present Tag: {self.present_tag}. Thus exiting.")
+            exit(1)
 
         # Log initialization details
         print(f"Initialized ReleaseNotesGenerator with the following parameters:")
@@ -42,7 +43,7 @@ class ReleaseNotesGenerator:
                 data = yaml1.safe_load(stream)
                 tags = data.get("Tag List", [])
                 latest_tag = tags[-1] if tags else None
-                print(f"Last tag: {latest_tag}")
+                print(f"Last tag read from taglist: {latest_tag}")
                 return latest_tag
         except Exception as exc:
                 print("Exception while reading taglist to fetch last tag")
@@ -70,7 +71,7 @@ class ReleaseNotesGenerator:
                 },
             ).json()
         
-        # Extract PR information from the response body
+            # Extract PR information from the response body
             lines = pr_list_res["body"].splitlines()
             pr_info_list = []
 
@@ -102,6 +103,7 @@ class ReleaseNotesGenerator:
         """
         description_list = []
         for pr_info in pr_info_list:
+            print(pr_info)
             if "(Build)" in pr_info.get("title"):
                 continue
             description = pr_info.get("body")
@@ -217,7 +219,7 @@ if __name__ == "__main__":
     git_token = sys.argv[3]
     present_tag = sys.argv[4]
     if base_branch != "develop" and (not base_branch.endswith(".x")) and (not base_branch.startswith("rc")):
-        print("This workflow is only applicable for .x, develop, and rc branches")
+        print("Generate Release Notes Workflow is only applicable for .x, develop, and rc branches")
         sys.exit(1)
 
     release_notes_obj = ReleaseNotesGenerator(base_branch, git_repo, git_token, present_tag)
