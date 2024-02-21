@@ -104,6 +104,7 @@ class ReleaseNotesGenerator:
         description_list = []
         for pr_info in pr_info_list:
             if "(Build)" in pr_info.get("title"):
+                print(f"Skipping PR as it has (Build) in the title. PR {pr_info['html_url']}")
                 continue
             description = pr_info.get("body")
             try:
@@ -126,7 +127,7 @@ class ReleaseNotesGenerator:
             sys.exit(0)
         description_list = self.__get_list_of_description(pr_list)
         if len(description_list) == 0:
-            print("Unable to find description to generate release notes")
+            print("Unable to find description to generate release notes as there are no PRs with Tickets found. Please add atlease one ticket.")
             sys.exit(1)
         yaml_data = self.__get_dict_to_update_in_build_notes(description_list)
         self.__update_into_file(yaml_data)
@@ -171,27 +172,30 @@ class ReleaseNotesGenerator:
             for tickets in description.get("Tickets", []):
                 desc = tickets.get("Description")
                 ticket = tickets.get("JiraID", "")
-                print(tickets)
                 if desc is None:
                     desc = ""
                 if len(desc) == 0 or (ticket in jira_dict and len(jira_dict.get(ticket)) == 0):
                     jira_dict[ticket] = ""
                 elif ticket in jira_dict:
                     similarity = fuzz.ratio(desc, jira_dict[ticket])
-                    print("sim", similarity)
                     if similarity < 70:
-                        jira_dict[ticket] = f"{jira_dict[ticket]}. {desc}"
+                        if jira_dict[ticket].endswith("."):
+                            jira_dict[ticket] = f"{jira_dict[ticket]} {desc}"
+                        else:
+                            jira_dict[ticket] = f"{jira_dict[ticket]}. {desc}"
                     else:
                         jira_dict[ticket] = desc
                 else:
                     jira_dict[ticket] = desc
-            print(jira_dict)
             dependencies += description.get("Dependencies", [])
             deprecated_features += description.get("Deprecated Features", [])
             limitations += description.get("Limitations", [])
         jira_list = [{"JiraID": k, "description": v} for k, v in jira_dict.items()]
         if len(jira_list) != 0:
             build_dict["Changes"] = jira_list
+        else:
+            print("There are no Jira Tickets in the build notes. There has to be atlease one ticket to create release.")
+            exit(1)
         if len(dependencies) != 0:
             build_dict["Dependencies"] = list(set(dependencies))
         if len(limitations) != 0:
