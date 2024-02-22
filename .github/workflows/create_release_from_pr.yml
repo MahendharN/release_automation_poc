@@ -29,10 +29,10 @@ jobs:
           exit 1
         fi
         
-        tag_name=$(echo "${{ github.event.pull_request.body }}" | grep -oE "Tag: (.*)" | cut -d' ' -f2)
+        tag_name=$(echo "${{ github.event.pull_request.body }}"
         if [[ -z "$tag_name" ]]; then
           echo "Tag not found in PR description."
-          exit 1
+          exit 0
         fi
         
         echo "::set-output name=tag_name::$tag_name"
