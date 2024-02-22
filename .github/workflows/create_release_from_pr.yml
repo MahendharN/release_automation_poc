@@ -10,7 +10,7 @@ jobs:
     
     if: |
       github.event.pull_request.merged == true &&
-      github.event.pull_request.title =~ '^Pr for Release Notes of' &&
+      contains(github.event.pull_request.title, 'Pr for Release Notes of') &&
       (
         startsWith(github.event.pull_request.base.ref, 'rc_') ||
         endsWith(github.event.pull_request.base.ref, '.x') ||
