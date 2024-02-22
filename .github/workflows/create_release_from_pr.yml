@@ -10,39 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.base_ref }}
-          fetch-depth: 0
-          token: ${{ secrets.GIT_TOKEN }}
-          
-      - name: Check PR Title
-        id: check-title
-        run: |
-          if [[ "${{ github.event.pull_request.title }}" =~ "Pr for Release Notes" ]]; then
-            echo "PR title contains 'Pr for Release Notes'"
-            echo "::set-output name=valid_title::true"
-          else
-            echo "PR title does not contain 'Pr for Release Notes'"
-            echo "::set-output name=valid_title::false"
-          fi
+          ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Extract Tag from PR Description
-        if: steps.check-title.outputs.valid_title == 'true'
-        id: extract-tag
-        run: |
-          # Extract the tag from the PR description
-          TAG="${{ github.event.pull_request.body }}"
-          echo "Extracted tag: $TAG"
-          echo "::set-output name=tag::$TAG"
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.x
 
+      - name: Install Dependencies
+        run: pip install PyGithub
+        
       - name: Create Release
-        if: startsWith(github.ref, 'refs/heads/rc_') || endsWith(github.ref, '.x') || github.ref == 'refs/heads/develop'
+        if: startsWith(github.base_ref, 'rc_') || endsWith(github.base_ref, '.x') || github.base_ref == 'develop'
         run: |
-          echo "Creating release for tag ${{ steps.extract-tag.outputs.tag }}"
-          echo "Release Title: Blizzard Release ${{ steps.extract-tag.outputs.tag }}"
+          BASE_BRANCH=${{ github.base_ref }}
+          GIT_REPO=${{ github.repository }}
+          GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          LATEST_COMMIT=${{ github.event.pull_request.head.sha }}
+          SOURCE_BRANCH=${{ github.head_ref }}
+          if [[ $SOURCE_BRANCH == $RELEASE_NOTES_PR ]]
+          then
+              python ./.github/scripts/create_tag_from_pr.py  $BASE_BRANCH $GIT_REPO $GIT_TOKEN $LATEST_COMMIT
+          else
+              echo "source branch is not release notes pr"
+          fi
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
 
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{"tag_name": "${{ steps.extract-tag.outputs.tag }}", "target_commitish":"${{ github.base_ref }}" "name": "Blizzard Release ${{ steps.extract-tag.outputs.tag }}", "body": "Release"}' \
-            "https://api.github.com/repos/${{ github.repository }}/releases"
