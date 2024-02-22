@@ -1,0 +1,44 @@
+name: Create Release on PR Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  createRelease:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check PR Title
+        id: check-title
+        run: |
+          if [[ "${{ github.event.pull_request.title }}" =~ "Pr for Release Notes" ]]; then
+            echo "PR title contains 'Pr for Release Notes'"
+            echo "::set-output name=valid_title::true"
+          else
+            echo "PR title does not contain 'Pr for Release Notes'"
+            echo "::set-output name=valid_title::false"
+          fi
+
+      - name: Extract Tag from PR Description
+        if: steps.check-title.outputs.valid_title == 'true'
+        id: extract-tag
+        run: |
+          # Extract the tag from the PR description
+          TAG=$(grep -oP 'TARGET_BLIZZARD_TAG: \K\S+' "${{ github.event.pull_request.body }}" || true)
+          echo "Extracted tag: $TAG"
+          echo "::set-output name=tag::$TAG"
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/heads/rc_') || endsWith(github.ref, '.x') || github.ref == 'refs/heads/develop'
+        run: |
+          echo "Creating release for tag ${{ steps.extract-tag.outputs.tag }}"
+          echo "Release Title: Blizzard Release ${{ steps.extract-tag.outputs.tag }}"
+
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"tag_name": "${{ steps.extract-tag.outputs.tag }}", "name": "Blizzard Release ${{ steps.extract-tag.outputs.tag }}", "body": "Release"}' \
+            "https://api.github.com/repos/${{ github.repository }}/releases"
