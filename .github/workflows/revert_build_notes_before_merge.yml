@@ -31,9 +31,9 @@ jobs:
                 git checkout $HEAD_BRANCH
                 mv build_notes1.yaml build_notes.yaml
                 mv taglist1.yaml taglist.yaml
-                echo $(git add build_notes.yaml taglist.yaml)
-                echo $(git commit -m "ci(Unchange Build Notes): Build Notes and taglist changes reverted")
-                echo $(git push origin ${{ github.head_ref }})
+                git add build_notes.yaml taglist.yaml
+                git commit -m "ci(Unchange Build Notes): Build Notes and taglist changes reverted"
+                git push origin ${{ github.head_ref }}
               fi
             else
                 echo "Accepted branches are *.x, develop, rc*"
