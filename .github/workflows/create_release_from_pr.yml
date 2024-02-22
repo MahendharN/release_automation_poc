@@ -29,7 +29,7 @@ jobs:
         id: extract-tag
         run: |
           # Extract the tag from the PR description
-          TAG=$(grep -oP 'TARGET_BLIZZARD_TAG: \K\S+' "${{ github.event.pull_request.body }}" || true)
+          TAG="${{ github.event.pull_request.body }}"
           echo "Extracted tag: $TAG"
           echo "::set-output name=tag::$TAG"
 
