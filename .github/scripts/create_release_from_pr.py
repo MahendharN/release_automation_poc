@@ -38,10 +38,10 @@ def create_tag(branch, repo_full_name, token, sha):
         print(f"Release was not tagged succesfully for tag: {tag_name}")
 
 if __name__ == "__main__":
-    branch = sys.argv[2]
-    repo_full_name = sys.argv[3]
-    token = sys.argv[4]
-    sha = sys.argv[5]
+    branch = sys.argv[1]
+    repo_full_name = sys.argv[2]
+    token = sys.argv[3]
+    sha = sys.argv[4]
     try:
         create_tag(branch, repo_full_name, token, sha)
     except Exception as e:
