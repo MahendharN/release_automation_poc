@@ -1,0 +1,39 @@
+name: Revert Build Notes and Tag List Before Merge
+
+on:
+    pull_request:
+      types: [opened, edited, synchronize]
+
+jobs:
+  Release-Notes-Pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          token: ${{ secrets.GIT_TOKEN }}
+
+      - name: Create Release Notes Pr
+        run: | 
+            BASE_BRANCH=${{ github.ref_name }}
+            HEAD_BRANCH=${{ github.head_ref }}
+            GIT_REPO=${{ github.repository }}
+            if [[ $BASE_BRANCH == *.x  || $BASE_BRANCH == "develop" || $BASE_BRANCH == rc* ]]
+            then
+                if [[ "${{ github.event.pull_request.title }}" != *"(Build)"* ]]; then
+                git config --local user.email "actions@github.com"
+                git config --local user.name "GitHub Actions"
+                echo $(git checkout ${{ github.base_ref }} build_notes.yaml taglist.yaml)
+                echo $(git add build_notes.yaml taglist.yaml)
+                echo $(git commit -m "ci(Unchange Build Notes): Build Notes and taglist changes reverted")
+                echo $(git push origin ${{ github.head_ref }})
+              fi
+            else
+                echo "Accepted branches are *.x, develop, rc*"
+                exit 0
+            fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+      
