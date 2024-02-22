@@ -23,7 +23,7 @@ jobs:
             if [[ $BASE_BRANCH == *.x  || $BASE_BRANCH == "develop" || $BASE_BRANCH == rc* ]]
             then
                 if [[ "${{ github.event.pull_request.title }}" != *"(Build)"* ]]; then
-                sudo .github/scripts/revert_build_notes_before_merge.sh || true
+                bash .github/scripts/revert_build_notes_before_merge.sh || true
               fi
             else
                 echo "Accepted branches are *.x, develop, rc*"
