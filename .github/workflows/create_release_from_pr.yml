@@ -1,38 +1,49 @@
-name: Create Release on PR Merge
+name: Generate Release Notes
 
 on:
   pull_request:
-    types:
-      - closed
+    types: [closed]
 
 jobs:
-  createRelease:
+  generate_release_notes:
     runs-on: ubuntu-latest
+    
+    if: |
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.title =~ '^Pr for Release Notes of' &&
+      (
+        startsWith(github.event.pull_request.base.ref, 'rc_') ||
+        endsWith(github.event.pull_request.base.ref, '.x') ||
+        github.event.pull_request.base.ref == 'develop'
+      )
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.x
-
-      - name: Install Dependencies
-        run: pip install PyGithub
-
-      - name: Create Release
-        if: startsWith(github.base_ref, 'rc_') || endsWith(github.base_ref, '.x') || github.base_ref == 'develop'
-        run: |
-          BASE_BRANCH=${{ github.base_ref }}
-          GIT_REPO=${{ github.repository }}
-          GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          LATEST_COMMIT=${{ github.event.pull_request.head.sha }}
-          SOURCE_BRANCH=${{ github.head_ref }}
-          python .github/scripts/create_release_from_pr.py  $BASE_BRANCH $GIT_REPO $GIT_TOKEN $LATEST_COMMIT
-        env:
-          GITHUB_EVENT_PATH: ${{ github.event_path }}
-          GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
-
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        if [[ -z "${{ github.event.pull_request.body }}" ]]; then
+          echo "PR description is empty."
+          exit 1
+        fi
+        
+        tag_name=$(echo "${{ github.event.pull_request.body }}" | grep -oE "Tag: (.*)" | cut -d' ' -f2)
+        if [[ -z "$tag_name" ]]; then
+          echo "Tag not found in PR description."
+          exit 1
+        fi
+        
+        echo "::set-output name=tag_name::$tag_name"
+        
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
+      with:
+        tag_name: ${{ steps.release_notes.outputs.tag_name }}
+        release_name: Release ${{ steps.release_notes.outputs.tag_name }}
+        body: |
+          Release notes for tag ${{ steps.release_notes.outputs.tag_name }}.
+          Add your release notes here.
