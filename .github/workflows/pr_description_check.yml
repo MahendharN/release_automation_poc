@@ -13,7 +13,11 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          token: ${{ secrets.GIT_TOKEN }}        
 
       - name: Check PR Description
         run: python .github/scripts/pr_description_check.py
@@ -23,8 +27,12 @@ jobs:
       - name: Remove Update in Build Notes and taglist yaml before Merge
         run: |
           if [[ "${{ github.event.pull_request.title }}" != *"(Build)"* ]]; then
+            git config --local user.email "actions@github.com"
+            git config --local user.name "GitHub Actions"
             echo $(git checkout ${{ github.base_ref }} build_notes.yaml taglist.yaml)
             echo $(git add build_notes.yaml taglist.yaml)
             echo $(git commit -m "ci(Unchange Build Notes): Build Notes and taglist changes reverted")
             echo $(git push origin ${{ github.head_ref }})
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
