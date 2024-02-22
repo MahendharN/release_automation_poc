@@ -4,20 +4,6 @@ BuildNotes:
   Author: Blizzard
   Changes:
     - JiraID: CRP-1
-      description: done.
-    - JiraID: NPIE-3
-      description: hello
-    - JiraID: CRP-2
       description: ''
   Dependencies:
-    - dep1.
-    - dep1
-  Limitations:
-    - lim1.
-    - lim1
-    - lim2
-  Deprecated Features:
-    - cdf
-    - jef.
-    - abc
-    - abc.
+
