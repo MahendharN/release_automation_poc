@@ -31,7 +31,7 @@ jobs:
           GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}
           LATEST_COMMIT=${{ github.event.pull_request.head.sha }}
           SOURCE_BRANCH=${{ github.head_ref }}
-          python ./.github/scripts/create_release_notes_from_pr.py  $BASE_BRANCH $GIT_REPO $GIT_TOKEN $LATEST_COMMIT
+          python .github/scripts/create_release_notes_from_pr.py  $BASE_BRANCH $GIT_REPO $GIT_TOKEN $LATEST_COMMIT
         env:
           GITHUB_EVENT_PATH: ${{ github.event_path }}
           GITHUB_TOKEN: ${{ secrets.MH_PUSH }}
