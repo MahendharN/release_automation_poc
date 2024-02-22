@@ -30,11 +30,12 @@ jobs:
         fi
         
         tag_name=$(echo "${{ github.event.pull_request.body }}")
-        if [[ -z "develop-07" ]]; then
-        echo "String is empty"
-        else
-            echo "String is not empty"
+        if [[ -z "$tag_name" ]]; then
+          echo "Tag not found in PR description."
+          exit 1
         fi
+        
+        echo "::set-output name=tag_name::$tag_name"
         
     - name: Create Release
       uses: actions/create-release@v1
