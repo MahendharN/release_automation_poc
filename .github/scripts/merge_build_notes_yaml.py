@@ -93,6 +93,7 @@ class MergeYaml:
             for tickets in yaml_file.get("BuildNotes", {}).get("Changes", []):
                 desc = tickets.get("description")
                 ticket = tickets.get("JiraID", "")
+                print(tickets,desc,ticket)
                 if desc is None:
                     desc = ""
                 if len(desc) == 0 or (ticket in self.final_changes_dict and len(self.final_changes_dict.get(ticket)) == 0):
