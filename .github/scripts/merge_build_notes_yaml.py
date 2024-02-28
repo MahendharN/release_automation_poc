@@ -139,6 +139,7 @@ class MergeYaml:
         try:
             if self.last_tag:
                 last_release = self.retrieve_github_contents(CPLIVE_CHARTS_REPO,CPLIVE_CHARTS_RELEASES_PATH,self.last_tag)
+                print(f"Release fetched for {self.last_tag}. Release fetched is {last_release}.")
                 if last_release:
                     last_release_images = last_release["dockerImages"]
                 else:
