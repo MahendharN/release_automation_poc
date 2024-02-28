@@ -90,6 +90,7 @@ class MergeYaml:
                 except Exception as e:
                     print(f"Unable to load yaml file {yaml_file}, Error {e}")
                     continue
+                print(yaml_file)
                 self.deprecated_features += yaml_file.get("Deprecated Features", [])
                 self.dependecies += yaml_file.get('Dependencies', [])
                 self.limitations += yaml_file.get('Limitations', [])
