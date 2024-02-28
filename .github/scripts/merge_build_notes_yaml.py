@@ -113,7 +113,10 @@ class MergeYaml:
         self.final_build_notes["BuildNotes"]["Deprecated Features"] = list(set(self.deprecated_features))
         self.final_build_notes["BuildNotes"]["Dependencies"] = list(set(self.dependecies))
         self.final_build_notes["BuildNotes"]["Limitations"] = list(set(self.limitations))
-        
+        print(self.final_changes_dict)
+        print(self.deprecated_features)
+        print(self.dependecies)
+        print(self.limitations)        
     def _get_yaml_list_from_subcomponents(self):
         for repo , dict in self.merge_dict.items():
             yaml_list = []
