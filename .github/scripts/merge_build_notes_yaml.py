@@ -86,14 +86,12 @@ class MergeYaml:
         for _ , dict in self.merge_dict.items():
             for yaml_file in dict.get(DICT_YAML_LIST_KEY):
                 pass
-            yaml_file = self.final_build_notes
             self.deprecated_features += yaml_file.get("Deprecated Features", [])
             self.dependecies += yaml_file.get('Dependencies', [])
             self.limitations += yaml_file.get('Limitations', [])
             for tickets in yaml_file.get("BuildNotes", {}).get("Changes", []):
                 desc = tickets.get("description")
                 ticket = tickets.get("JiraID", "")
-                print(tickets,desc,ticket)
                 if desc is None:
                     desc = ""
                 if len(desc) == 0 or (ticket in self.final_changes_dict and len(self.final_changes_dict.get(ticket)) == 0):
@@ -113,11 +111,7 @@ class MergeYaml:
         self.final_build_notes["BuildNotes"]["Changes"] = [{"JiraID": k, "description": v} for k, v in self.final_changes_dict.items()]
         self.final_build_notes["BuildNotes"]["Deprecated Features"] = list(set(self.deprecated_features))
         self.final_build_notes["BuildNotes"]["Dependencies"] = list(set(self.dependecies))
-        self.final_build_notes["BuildNotes"]["Limitations"] = list(set(self.limitations))
-        print(self.final_changes_dict)
-        print(self.deprecated_features)
-        print(self.dependecies)
-        print(self.limitations)        
+        self.final_build_notes["BuildNotes"]["Limitations"] = list(set(self.limitations))     
     def _get_yaml_list_from_subcomponents(self):
         for repo , dict in self.merge_dict.items():
             yaml_list = []
