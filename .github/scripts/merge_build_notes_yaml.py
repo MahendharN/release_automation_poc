@@ -205,6 +205,7 @@ class MergeYaml:
         response = requests.get(url, auth=auth)
         if response.ok:
             content = response.json()
+            print(content)
             if isinstance(content, dict) and "content" in content:
                 file_content = content["content"]
                 decoded_content = base64.b64decode(file_content).decode("utf-8")
