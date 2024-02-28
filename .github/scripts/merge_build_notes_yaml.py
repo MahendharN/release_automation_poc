@@ -85,28 +85,27 @@ class MergeYaml:
     def _merge_yamls_to_final_build_notes(self):
         for _ , dict in self.merge_dict.items():
             for yaml_file in dict.get(DICT_YAML_LIST_KEY):
-                pass
-            self.deprecated_features += yaml_file.get("Deprecated Features", [])
-            self.dependecies += yaml_file.get('Dependencies', [])
-            self.limitations += yaml_file.get('Limitations', [])
-            for tickets in yaml_file.get("BuildNotes", {}).get("Changes", []):
-                desc = tickets.get("description")
-                ticket = tickets.get("JiraID", "")
-                if desc is None:
-                    desc = ""
-                if len(desc) == 0 or (ticket in self.final_changes_dict and len(self.final_changes_dict.get(ticket)) == 0):
-                    self.final_changes_dict[ticket] = ""
-                elif ticket in self.final_changes_dict:
-                    similarity = fuzz.ratio(desc, self.final_changes_dict[ticket])
-                    if similarity < 70:
-                        if self.final_changes_dict[ticket].endswith("."):
-                            self.final_changes_dict[ticket] = f"{self.final_changes_dict[ticket]} {desc}"
+                self.deprecated_features += yaml_file.get("Deprecated Features", [])
+                self.dependecies += yaml_file.get('Dependencies', [])
+                self.limitations += yaml_file.get('Limitations', [])
+                for tickets in yaml_file.get("BuildNotes", {}).get("Changes", []):
+                    desc = tickets.get("description")
+                    ticket = tickets.get("JiraID", "")
+                    if desc is None:
+                        desc = ""
+                    if len(desc) == 0 or (ticket in self.final_changes_dict and len(self.final_changes_dict.get(ticket)) == 0):
+                        self.final_changes_dict[ticket] = ""
+                    elif ticket in self.final_changes_dict:
+                        similarity = fuzz.ratio(desc, self.final_changes_dict[ticket])
+                        if similarity < 70:
+                            if self.final_changes_dict[ticket].endswith("."):
+                                self.final_changes_dict[ticket] = f"{self.final_changes_dict[ticket]} {desc}"
+                            else:
+                                self.final_changes_dict[ticket] = f"{self.final_changes_dict[ticket]}. {desc}"
                         else:
-                            self.final_changes_dict[ticket] = f"{self.final_changes_dict[ticket]}. {desc}"
+                            self.final_changes_dict[ticket] = desc
                     else:
                         self.final_changes_dict[ticket] = desc
-                else:
-                    self.final_changes_dict[ticket] = desc
 
         self.final_build_notes["BuildNotes"]["Changes"] = [{"JiraID": k, "description": v} for k, v in self.final_changes_dict.items()]
         self.final_build_notes["BuildNotes"]["Deprecated Features"] = list(set(self.deprecated_features))
