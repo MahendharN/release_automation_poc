@@ -5,6 +5,7 @@ import yaml as yaml1
 from ruamel.yaml import YAML
 import sys
 
+OWNER = "MahendharN"
 REPOS = ["test_elicplusplus","test_blizzard","test_elicdp","release_automation_poc"]
 ELICPLUSPLUS_REPO = "test_elicplusplus"
 BLIZZARD_REPO = "test_blizzard"
@@ -13,7 +14,6 @@ CPLIVE_CHARTS_REPO = "release_automation_poc"
 CPLIVE_CHART_BUILD_NOTES_PATH = "./build_notes.yaml"
 CPLIVE_CHART_TAGLIST_PATH = "./taglist.yaml"
 CPLIVE_CHARTS_RELEASES_PATH = "./releases.yaml"
-
 DICT_PRESENT_TAG_KEY = "present_tag"
 DICT_LAST_TAG_KEY = "last_tag"
 DICT_TAG_LIST_KEY = "tag_list"
@@ -221,6 +221,6 @@ class MergeYaml:
             return None
 
 if __name__ == '__main__':
-    OWNER = sys.argv[1]
+    OWNER = sys.argv[1].split("/")[0] if len(sys.argv[1].split("/")) > 1 else OWNER
     TOKEN = sys.argv[2]
     merge = MergeYaml(OWNER,TOKEN)
