@@ -135,6 +135,7 @@ class MergeYaml:
             exit(1)
 
         # Read Present Releases yaml
+        last_release = None
         try:
             if self.last_tag:
                 last_release = self.retrieve_github_contents(CPLIVE_CHARTS_REPO,CPLIVE_CHARTS_RELEASES_PATH,self.last_tag)
