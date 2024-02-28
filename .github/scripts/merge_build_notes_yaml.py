@@ -39,6 +39,7 @@ class MergeYaml:
                 self.limitations = self.final_build_notes["BuildNotes"]["Limitations"]
                 
         except Exception as e:
+            print("Error opening build notes file in local path.")
             print(e)
             exit(1)
 
@@ -49,6 +50,7 @@ class MergeYaml:
                 self.last_tag = taglistdict['Tag List'][-2] if len(taglistdict['Tag List']) > 1 else None
                 self.present_tag = taglistdict['Tag List'][-1]
         except Exception as e:
+            print("Error opening taglist file in local path.")
             print(e)
             exit(1)
 
@@ -128,6 +130,7 @@ class MergeYaml:
                 present_release = yaml1.safe_load(file)
                 present_release_images = present_release["dockerImages"]
         except Exception as e:
+            print(f"Error opening {CPLIVE_CHARTS_RELEASES_PATH}.")
             print(e)
             exit(1)
 
@@ -142,6 +145,7 @@ class MergeYaml:
             else:
                 last_release_images = None
         except Exception as e:
+            print(f"Error while getting {CPLIVE_CHARTS_RELEASES_PATH} from tag {self.last_tag}. Release fetched is {last_release}.")
             print(e)
             exit(1)
 
