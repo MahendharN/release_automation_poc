@@ -60,7 +60,9 @@ jobs:
                 git checkout $BASE_BRANCH
                 git checkout -b $RELEASE_NOTES_PR
                 pip install fuzzywuzzy
+                echo ${{ github.repository }}
                 python ./.github/scripts/create_release_notes.py "$BASE_BRANCH" "$GIT_REPO" "$GITHUB_TOKEN" "$TARGET_BLIZZARD_TAG"
+                python ./.github/scripts/merge_build_notes_yaml.py "MahendharN" "$GITHUB_TOKEN"
                 git_status=$(git status --porcelain)
                 if [ -n "$git_status" ]
                 then
