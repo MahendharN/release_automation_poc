@@ -5,7 +5,7 @@ charts:
     chartVersion: 6.2.4
 
 dockerImages:
-  sauronDockerImage: "cp/cplive/elic:1.0.0"
+  sauronDockerImage: "cp/cplive/elic:rc_1.0.1-v0"
   elicdpDockerImage: "cp/cplive/elicdp:fr_2.3.0_new_ts_parser_v0"
   elicplusplusDockerImage: "cp/cplive/elicplusplus:1.0.0"
   elicDockerImage: "cp/cplive/elic:5.24.0"
@@ -33,6 +33,6 @@ dockerImages:
   transdecoderDockerImage: "cp/playout/mimas:fr_do_4.19.11_jpegx_new_license_v6"
   switcherDockerImage: "cp/playout/st2022-7-switcher:v5.1.159.0"
   lmcDockerImage: "cp/cplive/elicplusplus:6.2.1"
-  unmanagedScteDockerImage: "cp/cplive/elicdp:1.0.0"
+  unmanagedScteDockerImage: "cp/cplive/elicdp:rc_1.0.1-v0"
 serverless: {}
 
