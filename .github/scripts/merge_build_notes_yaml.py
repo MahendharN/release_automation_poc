@@ -55,9 +55,13 @@ class MergeYaml:
             exit(1)
 
         self.merge_dict = self.get_last_and_present_tag_for_subcomponents()
+        print(f"Merge Dict updated with last and present tag for each repo. {self.merge_dict}")
         self._get_tag_list_from_subcomponents()
+        print(f"Merge Dict updated with tag list for each repo. {self.merge_dict}")
         self._get_yaml_list_from_subcomponents()
+        print(f"Merge Dict updated with yaml for each repo. {self.merge_dict}")
         self._merge_yamls_to_final_build_notes()
+        print(f"Print Final Yaml {self.final_build_notes}")
         self.__update_into_file(self.final_build_notes)
 
 
@@ -79,7 +83,7 @@ class MergeYaml:
         return result_dict
 
     def _merge_yamls_to_final_build_notes(self):
-        for repo , dict in self.merge_dict.items():
+        for _ , dict in self.merge_dict.items():
             for yaml in dict.get(DICT_YAML_LIST_KEY):
                 pass
             yaml = self.final_build_notes
