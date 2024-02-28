@@ -214,6 +214,6 @@ class MergeYaml:
             return None
 
 if __name__ == '__main__':
-    OWNER = sys.argv[2]
-    TOKEN = sys.argv[3]
+    OWNER = sys.argv[1]
+    TOKEN = sys.argv[2]
     merge = MergeYaml(OWNER,TOKEN)
