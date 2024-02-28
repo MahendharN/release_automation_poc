@@ -84,13 +84,13 @@ class MergeYaml:
 
     def _merge_yamls_to_final_build_notes(self):
         for _ , dict in self.merge_dict.items():
-            for yaml in dict.get(DICT_YAML_LIST_KEY):
+            for yaml_file in dict.get(DICT_YAML_LIST_KEY):
                 pass
-            yaml = self.final_build_notes
-            self.deprecated_features += yaml.get("Deprecated Features", [])
-            self.dependecies += yaml.get('Dependencies', [])
-            self.limitations += yaml.get('Limitations', [])
-            for tickets in yaml.get("BuildNotes", {}).get("Changes", []):
+            yaml_file = self.final_build_notes
+            self.deprecated_features += yaml_file.get("Deprecated Features", [])
+            self.dependecies += yaml_file.get('Dependencies', [])
+            self.limitations += yaml_file.get('Limitations', [])
+            for tickets in yaml_file.get("BuildNotes", {}).get("Changes", []):
                 desc = tickets.get("description")
                 ticket = tickets.get("JiraID", "")
                 if desc is None:
