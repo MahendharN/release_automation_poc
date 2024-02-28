@@ -1,0 +1,38 @@
+charts:
+  - chartName: cplive-orc-plane
+    chartVersion: 6.2.4
+  - chartName: cplive-control-plane
+    chartVersion: 6.2.4
+
+dockerImages:
+  sauronDockerImage: "cp/cplive/elic:6.2.3"
+  elicdpDockerImage: "cp/cplive/elicdp:fr_2.3.0_new_ts_parser_v0"
+  elicplusplusDockerImage: "cp/cplive/elicplusplus:6.2.2"
+  elicDockerImage: "cp/cplive/elic:5.24.0"
+  servoDockerImage: "cp/cplive/elic:5.24.0"
+  epubDockerImage: "cp/cplive/paalaka:v2.0.5"
+  transcoderDockerImage: "cp/cplive/morpheus:0.1.6"
+  vodorDockerImage: "cp/cplive/vodor:vodor_1.0.1"
+  ecrCronJobImage: "cp/cplive/elic:5.24.0"
+  rtpfec2udpDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  udp2srtDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  srt2udpDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  s32udpDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  udp2webrtcDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  udp2webrtc_esDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  tr07_to_ndijxsDockerImage: "cp/playout/tardis:0.19.40-tr07-v44"
+  ddDockerImage: "cp/playout/mimas:fr_4.20.0_ingest_dd_ops_config_v0"
+  relay_controllerDockerImage: "cp/cplive/elic:6.2.0"
+  relay_rtpfec2udpDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  relay_udp2srtDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  relay_srt2rtpDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  relay_ristInDockerImage: "cp/playout/tardis:tar_0.20.4.1"
+  recorder_captureDockerImage: "cp/cplive/elicdp:6.2.0"
+  controller_transcoderDockerImage: "cp/cplive/isengard:0.2.3"
+  packagerDockerImage: "cp/cplive/packager:pkgr_0.5.19"
+  transdecoderDockerImage: "cp/playout/mimas:fr_do_4.19.11_jpegx_new_license_v6"
+  switcherDockerImage: "cp/playout/st2022-7-switcher:v5.1.159.0"
+  lmcDockerImage: "cp/cplive/elicplusplus:6.2.1"
+  unmanagedScteDockerImage: "cp/cplive/elicdp:6.2.0"
+serverless: {}
+
