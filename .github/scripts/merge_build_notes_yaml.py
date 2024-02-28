@@ -196,11 +196,7 @@ class MergeYaml:
     def retrieve_github_contents(self, remote_repo, remote_path, git_tag):
         print(f"Fetching {remote_path} from tag {git_tag} in Repo {remote_repo}")
         url = f"https://api.github.com/repos/{self.owner}/{remote_repo}/contents/{remote_path}?ref={git_tag}"
-        auth = {
-            "Authorization": f"Bearer {self.token}",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-        }
+        auth = (self.token)
 
         response = requests.get(url, auth=auth)
         if response.ok:
