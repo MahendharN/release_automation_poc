@@ -91,7 +91,7 @@ class MergeYaml:
                     print(f"Unable to load yaml file {yaml_file}, Error {e}")
                     continue
                 print(yaml_file)
-                self.deprecated_features += yaml_file.get("Deprecated Features", [])
+                self.deprecated_features = self.deprecated_features.extend(yaml_file.get("Deprecated Features", []))
                 self.dependecies += yaml_file.get('Dependencies', [])
                 self.limitations += yaml_file.get('Limitations', [])
                 print(self.deprecated_features,self.dependecies,self.limitations,type(self.deprecated_features))
