@@ -1,0 +1,24 @@
+BuildNotes:
+  Changes:
+    - JiraID: CRP-1
+      description: done. Done blizzard change
+    - JiraID: NPIE-3
+      description: hello
+    - JiraID: CRP-2
+      description: ''
+    - JiraID: NPIE-01
+      description: Done bug from ELICDP
+  Deprecated Features:
+    - abc
+    - abc.
+    - jef.
+    - cdf
+    - this
+  Dependencies:
+    - dep1.
+    - dep1
+  Limitations:
+    - hello
+    - lim1
+    - lim1.
+    - lim2
