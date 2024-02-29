@@ -23,6 +23,8 @@ YAML_TAG_LIST_KEY = "Tag List"
 SUBCOMPONENTS_RELEASES_DICT = {BLIZZARD_REPO:"sauronDockerImage"
                                ,ELICPLUSPLUS_REPO:"elicplusplusDockerImage",
                                ELICDP_REPO: "unmanagedScteDockerImage"}
+
+KEYS_TO_UPDATE = ["Deprecated Features", "Dependencies", "Limitations","Changes"]
 class MergeYaml:
 
     def __init__(self,owner,token):
@@ -33,10 +35,10 @@ class MergeYaml:
         try:
             with open(CPLIVE_CHART_BUILD_NOTES_PATH, 'r') as file:
                 self.final_build_notes = yaml1.safe_load(file)
-                self.final_changes_dict = self.convert_changes_list_to_dict(self.final_build_notes["BuildNotes"]["Changes"])
-                self.deprecated_features = self.final_build_notes["BuildNotes"]["Deprecated Features"]
-                self.dependecies = self.final_build_notes["BuildNotes"]["Dependencies"]
-                self.limitations = self.final_build_notes["BuildNotes"]["Limitations"]
+                self.final_changes_dict = self.convert_changes_list_to_dict(self.final_build_notes["BuildNotes"].get("Changes",[]))
+                self.deprecated_features = self.final_build_notes["BuildNotes"].get("Deprecated Features",[])
+                self.dependecies = self.final_build_notes["BuildNotes"].get("Dependencies",[])
+                self.limitations = self.final_build_notes["BuildNotes"].get("Limitations",[])
                 
         except Exception as e:
             print("Error opening build notes file in local path.")
@@ -91,7 +93,7 @@ class MergeYaml:
                 except Exception as e:
                     print(f"Unable to load yaml file {yaml_file}, Error {e}")
                     continue
-                self.deprecated_features = yaml_file.get("Deprecated Features", [])
+                self.deprecated_features += yaml_file.get("Deprecated Features", [])
                 self.dependecies += yaml_file.get('Dependencies', [])
                 self.limitations += yaml_file.get('Limitations', [])
                 for tickets in yaml_file.get("Changes", []):
@@ -113,10 +115,16 @@ class MergeYaml:
                     else:
                         self.final_changes_dict[ticket] = desc
 
+        self.final_build_notes["BuildNotes"] = {}
+        for key in KEYS_TO_UPDATE:
+            self.final_build_notes["BuildNotes"].pop(key, None)
         self.final_build_notes["BuildNotes"]["Changes"] = [{"JiraID": k, "description": v} for k, v in self.final_changes_dict.items()]
-        self.final_build_notes["BuildNotes"]["Deprecated Features"] = list(set(self.deprecated_features))
-        self.final_build_notes["BuildNotes"]["Dependencies"] = list(set(self.dependecies))
-        self.final_build_notes["BuildNotes"]["Limitations"] = list(set(self.limitations))     
+        if len(self.deprecated_features) > 0:
+            self.final_build_notes["BuildNotes"]["Deprecated Features"] = list(set(self.deprecated_features))
+        if len(self.dependecies) >0:
+            self.final_build_notes["BuildNotes"]["Dependencies"] = list(set(self.dependecies))
+        if len(self.limitations) > 0:
+            self.final_build_notes["BuildNotes"]["Limitations"] = list(set(self.limitations))     
     def _get_yaml_list_from_subcomponents(self):
         for repo , dict in self.merge_dict.items():
             yaml_list = []
