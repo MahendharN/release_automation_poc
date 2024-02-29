@@ -9,7 +9,7 @@ from fuzzywuzzy import fuzz
 
 BUILD_NOTES_FILE_PATH = "./build_notes.yaml"
 TAGLIST_FILE_PATH = "./taglist.yaml"
-AUTHOR = "Blizzard"
+AUTHOR = "CPLive"
 
 class ReleaseNotesGenerator:
     def __init__(self, base_branch, git_repo, git_token, present_tag):

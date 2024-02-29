@@ -121,7 +121,7 @@ class MergeYaml:
         self.final_build_notes["BuildNotes"]["Changes"] = [{"JiraID": k, "description": v} for k, v in self.final_changes_dict.items()]
         if len(self.deprecated_features) > 0:
             self.final_build_notes["BuildNotes"]["Deprecated Features"] = list(set(self.deprecated_features))
-        if len(self.dependecies) >0:
+        if len(self.dependecies) > 0:
             self.final_build_notes["BuildNotes"]["Dependencies"] = list(set(self.dependecies))
         if len(self.limitations) > 0:
             self.final_build_notes["BuildNotes"]["Limitations"] = list(set(self.limitations))     
