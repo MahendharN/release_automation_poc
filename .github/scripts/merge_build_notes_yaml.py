@@ -94,7 +94,7 @@ class MergeYaml:
                 self.deprecated_features += yaml_file.get("Deprecated Features", [])
                 self.dependecies += yaml_file.get('Dependencies', [])
                 self.limitations += yaml_file.get('Limitations', [])
-                print(self.deprecated_features,self.dependecies,self.limitations)
+                print(self.deprecated_features,self.dependecies,self.limitations,type(self.deprecated_features))
                 for tickets in yaml_file.get("BuildNotes", {}).get("Changes", []):
                     desc = tickets.get("description")
                     ticket = tickets.get("JiraID", "")
